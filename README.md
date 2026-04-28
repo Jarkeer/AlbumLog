@@ -22,6 +22,14 @@ Características:
  No Funcionales:
 - El diseño visual debe utilizar un ThemeData global configurado para evitar la codificación dura.
 - Los recursos gráficos y textos (títulos de discos, nombres de artistas) deben ser altamente coherentes
+
+Instrucciones de Uso:
+- Al abrir la app desliza hacia abajo para ver las carcteristicas
+- Utiliza el menú fijo en la parte inferior de la pantalla para moverte de forma rápida entre las cuatro secciones principales (Inicio, Explorar, Perfil, About).
+- Toca el ícono de la brújula ("Explorar") en el menú inferior para acceder a la lista de discos en tendencia.
+- Dentro de la sección "Explorar", presiona cualquier disco de la lista. Esto te llevará a una nueva pantalla con la información específica de ese álbum.
+- Cuando estés en el detalle de un disco, utiliza la flecha ubicada en la esquina superior izquierda de la pantalla para regresar a la lista principal.
+- Accede a las pestañas "Perfil" para gestionar tu cuenta (en construcción) o "Info" para leer más sobre deldesarrollador y buscar ayuda.
  
 [DiagramaDFlujo.pdf](https://github.com/user-attachments/files/27035821/DiagramaDFlujo.pdf)
 [RESEARCH.md](https://github.com/user-attachments/files/27037290/RESEARCH.md)

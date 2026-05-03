@@ -3,6 +3,7 @@ import 'ui/screens/home_screen.dart';
 import 'ui/screens/explore_screen.dart';
 import 'ui/screens/profile_screen.dart';
 import 'ui/screens/about_screen.dart';
+import 'ui/screens/splash_screen.dart';
 
 void main() => runApp(const AlbumLogApp());
 
@@ -20,8 +21,19 @@ class AlbumLogApp extends StatelessWidget {
           seedColor: const Color(0xFF6200EE),
           brightness: Brightness.dark, 
         ),
+        appBarTheme: const AppBarTheme(
+          centerTitle: true,
+          elevation: 0,
+          backgroundColor: Colors.transparent,
+        ),
+       cardTheme: CardThemeData(
+          elevation: 4,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
       ),
-      home: const MainNavigationWrapper(),
+      home: const SplashScreen(),
     );
   }
 }

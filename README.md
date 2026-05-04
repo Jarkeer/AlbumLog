@@ -30,7 +30,26 @@ Instrucciones de Uso:
 - Dentro de la sección "Explorar", presiona cualquier disco de la lista. Esto te llevará a una nueva pantalla con la información específica de ese álbum.
 - Cuando estés en el detalle de un disco, utiliza la flecha ubicada en la esquina superior izquierda de la pantalla para regresar a la lista principal.
 - Accede a las pestañas "Perfil" para gestionar tu cuenta (en construcción) o "Info" para leer más sobre deldesarrollador y buscar ayuda.
+
+
  
 [DiagramaDFlujo.pdf](https://github.com/user-attachments/files/27035821/DiagramaDFlujo.pdf)
 [RESEARCH.md](https://github.com/user-attachments/files/27037290/RESEARCH.md)
+```mermaid
+flowchart TD
+    A([Inicio: Pantalla Principal]) --> B[Ingresar a la pestaña de Búsqueda]
+    B --> C[Escribir nombre del disco\nej: Synkronized]
+    C --> D{¿El disco existe\nen la API?}
+    D -- No --> E[Mostrar mensaje de error\n'Disco no encontrado']
+    E --> B
+    D -- Sí --> F[Mostrar lista de resultados]
+    F --> G[El usuario selecciona el disco correcto]
+    G --> H[Mostrar detalles del disco\ny sección de 'Discos Similares']
+    H --> I{¿Usuario desea\ndejar una reseña?}
+    I -- No --> J[Volver a navegar o salir]
+    I -- Sí --> K[Abrir formulario de reseña]
+    K --> L[Ingresar texto de reseña\ny asignar puntuación]
+    L --> M[Presionar botón 'Publicar']
+    M --> N[Guardar registro en la Base de Datos\ny actualizar el Feed]
+    N --> O([Fin: Reseña publicada con éxito])
 

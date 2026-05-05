@@ -31,9 +31,6 @@ Instrucciones de Uso:
 - Cuando estés en el detalle de un disco, utiliza la flecha ubicada en la esquina superior izquierda de la pantalla para regresar a la lista principal.
 - Accede a las pestañas "Perfil" para gestionar tu cuenta (en construcción) o "Info" para leer más sobre deldesarrollador y buscar ayuda.
 
-
- 
-[DiagramaDFlujo.pdf](https://github.com/user-attachments/files/27035821/DiagramaDFlujo.pdf)
 [RESEARCH.md](https://github.com/user-attachments/files/27037290/RESEARCH.md)
 ```mermaid
 flowchart TD

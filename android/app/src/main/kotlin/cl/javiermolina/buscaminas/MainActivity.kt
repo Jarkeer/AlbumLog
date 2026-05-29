@@ -1,4 +1,4 @@
-package com.example.album_log
+package cl.javiermolina.buscaminas
 
 import io.flutter.embedding.android.FlutterActivity
 

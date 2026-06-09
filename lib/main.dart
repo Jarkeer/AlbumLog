@@ -20,7 +20,7 @@ class AlbumLogApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Escuchamos el ViewModel para saber qué tema aplicar
+
     final prefsVM = Provider.of<PreferencesViewModel>(context);
 
     return MaterialApp(
@@ -51,7 +51,6 @@ class AlbumLogApp extends StatelessWidget {
   }
 }
 
-// --- CONTENEDOR DE NAVEGACIÓN (UNIFICA TUS AVANCES) ---
 class MainNavigationWrapper extends StatefulWidget {
   const MainNavigationWrapper({super.key});
 
@@ -63,8 +62,8 @@ class _MainNavigationWrapperState extends State<MainNavigationWrapper> {
   int _currentIndex = 0;
 
   final List<Widget> _screens = [
-    const PoCScreen(), // Tu avance 1: API
-    const PreferencesScreen(), // Tu avance 2: Persistencia
+    const PoCScreen(), 
+    const PreferencesScreen(), 
   ];
 
   @override
@@ -93,7 +92,6 @@ class _MainNavigationWrapperState extends State<MainNavigationWrapper> {
   }
 }
 
-// --- PANTALLA DE PRUEBA DE CONCEPTO (RECUPERADA) ---
 class PoCScreen extends StatefulWidget {
   const PoCScreen({super.key});
 

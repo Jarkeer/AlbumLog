@@ -3,13 +3,21 @@ import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+// Preferencias
 import 'viewsmodel/preferences_viewmodel.dart';
 import 'ui/screens/preferences_screen.dart';
 
+// Encuesta
+import 'viewsmodel/qa_viewmodel.dart';
+import 'ui/screens/qa_screen.dart';
+
 void main() {
   runApp(
-    ChangeNotifierProvider(
-      create: (_) => PreferencesViewModel(),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => PreferencesViewModel()),
+        ChangeNotifierProvider(create: (_) => QaViewModel()),
+      ],
       child: const AlbumLogApp(),
     ),
   );
@@ -20,7 +28,6 @@ class AlbumLogApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     final prefsVM = Provider.of<PreferencesViewModel>(context);
 
     return MaterialApp(
@@ -62,8 +69,9 @@ class _MainNavigationWrapperState extends State<MainNavigationWrapper> {
   int _currentIndex = 0;
 
   final List<Widget> _screens = [
-    const PoCScreen(), 
-    const PreferencesScreen(), 
+    const PoCScreen(),
+    const PreferencesScreen(),
+    const QaScreen(),
   ];
 
   @override
@@ -78,14 +86,9 @@ class _MainNavigationWrapperState extends State<MainNavigationWrapper> {
           });
         },
         items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.search),
-            label: 'PoC iTunes',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: 'Configuración',
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.search), label: 'PoC iTunes'),
+          BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Configuración'),
+          BottomNavigationBarItem(icon: Icon(Icons.assignment_turned_in), label: 'Beta Test QA'),
         ],
       ),
     );

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:album_log/main.dart'; // Importamos para acceder a MainNavigationWrapper
+import 'package:album_log/main.dart'; 
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -24,10 +24,10 @@ class _SplashScreenState extends State<SplashScreen> {
     if (!mounted) return;
     
     // Navegamos reemplazando la pantalla actual para no poder volver atrás al Splash
-    Navigator.pushReplacement(
+   /* Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (context) => const MainNavigationWrapper()),
-    );
+    );*/
   }
 
   @override

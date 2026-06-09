@@ -1,76 +1,98 @@
 import 'package:flutter/material.dart';
-import 'ui/screens/home_screen.dart';
-import 'ui/screens/explore_screen.dart';
-import 'ui/screens/profile_screen.dart';
-import 'ui/screens/about_screen.dart';
-import 'ui/screens/splash_screen.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert'; 
+void main() => runApp(const PoCApp());
 
-void main() => runApp(const AlbumLogApp());
-
-class AlbumLogApp extends StatelessWidget {
-  const AlbumLogApp({super.key});
+class PoCApp extends StatelessWidget {
+  const PoCApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'AlbumLog',
+    return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF6200EE),
-          brightness: Brightness.dark, 
-        ),
-        appBarTheme: const AppBarTheme(
-          centerTitle: true,
-          elevation: 0,
-          backgroundColor: Colors.transparent,
-        ),
-       cardTheme: CardThemeData(
-          elevation: 4,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-        ),
-      ),
-      home: const SplashScreen(),
+      home: PoCScreen(),
     );
   }
 }
 
-
-class MainNavigationWrapper extends StatefulWidget {
-  const MainNavigationWrapper({super.key});
+class PoCScreen extends StatefulWidget {
+  const PoCScreen({super.key});
 
   @override
-  State<MainNavigationWrapper> createState() => _MainNavigationWrapperState();
+  State<PoCScreen> createState() => _PoCScreenState();
 }
 
-class _MainNavigationWrapperState extends State<MainNavigationWrapper> {
-  int _selectedIndex = 0;
+class _PoCScreenState extends State<PoCScreen> {
+  String _resultado = "Presiona el botón para buscar a Daft Punk";
+  bool _isLoading = false;
 
-  final List<Widget> _screens = [
-    const HomeView(),
-    const ExploreView(),
-    const ProfileView(),
-    const AboutScreen(),
-  ];
+  // Función asíncrona que simula la Capa de Datos 
+  Future<void> _fetchDataFromiTunes() async {
+    setState(() {
+      _isLoading = true;
+      _resultado = "Conectando a la API de iTunes...";
+    });
+
+    try {
+      // Endpoint de la API pública de iTunes
+      final url = Uri.parse('https://itunes.apple.com/search?term=daft+punk&entity=album&limit=1');
+      
+      // Realizamos la petición HTTP GET
+      final response = await http.get(url);
+
+      if (response.statusCode == 200) {
+        // Decodificamos el JSON
+        final Map<String, dynamic> data = json.decode(response.body);
+        
+        // Extraemos un dato específico para probar que funcionó
+        final albumName = data['results'][0]['collectionName'];
+        final artistName = data['results'][0]['artistName'];
+
+        setState(() {
+          _resultado = "¡Éxito!\n\nÁlbum encontrado: $albumName\nArtista: $artistName\n\nJSON Crudo:\n${response.body.substring(0, 150)}...";
+        });
+      } else {
+        setState(() {
+          _resultado = "Error de servidor: Código ${response.statusCode}";
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _resultado = "Fallo de conexión o error crítico:\n$e";
+      });
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _screens[_selectedIndex],
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: _selectedIndex,
-        onDestinationSelected: (int index) {
-          setState(() => _selectedIndex = index);
-        },
-        destinations: const [
-          NavigationDestination(icon: Icon(Icons.home), label: 'Inicio'),
-          NavigationDestination(icon: Icon(Icons.explore), label: 'Explorar'),
-          NavigationDestination(icon: Icon(Icons.person), label: 'Perfil'),
-          NavigationDestination(icon: Icon(Icons.info), label: 'Acerca de'),
-        ],
+      appBar: AppBar(title: const Text('PoC: iTunes API')),
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                _resultado,
+                textAlign: TextAlign.center,
+                style: const TextStyle(fontSize: 16),
+              ),
+              const SizedBox(height: 30),
+              if (_isLoading) 
+                const CircularProgressIndicator()
+              else
+                ElevatedButton(
+                  onPressed: _fetchDataFromiTunes,
+                  child: const Text('Ejecutar Transacción HTTP'),
+                ),
+            ],
+          ),
+        ),
       ),
     );
   }

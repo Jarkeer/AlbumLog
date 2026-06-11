@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import '../../models/album_model.dart';
 import 'detail_screen.dart';
 
 class ExploreView extends StatefulWidget {
@@ -12,94 +13,57 @@ class ExploreView extends StatefulWidget {
 
 class _ExploreViewState extends State<ExploreView> {
   final TextEditingController _searchController = TextEditingController();
-  List<dynamic> _albumList = [];
+  
+  final String _lastFmApiKey = '3892c0bae522895e4cef36d817718d35'; 
+  
   bool _isLoading = false;
-  String _mensaje = '';
+  List<dynamic> _albumList = [];
+  String _mensaje = "Busca tu álbum o artista favorito...";
 
-  Future<void> _buscarAlbumes(String query) async {
-    if (query.trim().isEmpty) return;
+  Future<void> _searchAlbums() async {
+    final String query = _searchController.text.trim();
+    if (query.isEmpty) return;
 
     setState(() {
       _isLoading = true;
+      _mensaje = "Buscando en la red...";
       _albumList = [];
-      _mensaje = 'Buscando...';
     });
 
     try {
-      final encoded = Uri.encodeComponent(query.trim());
-      final List<dynamic> allResults = [];
+      final String encodedQuery = Uri.encodeComponent(query);
+      final url = Uri.parse('http://ws.audioscrobbler.com/2.0/?method=album.search&album=$encodedQuery&api_key=$_lastFmApiKey&format=json&limit=15');
+      final response = await http.get(url);
 
-      
-      final r1 = await http.get(Uri.parse(
-        'https://itunes.apple.com/search?term=$encoded&entity=album&limit=200&country=US',
-      ));
-      if (r1.statusCode == 200) {
-        allResults.addAll(json.decode(r1.body)['results'] ?? []);
-      }
-
-      
-      final r2 = await http.get(Uri.parse(
-        'https://itunes.apple.com/search?term=$encoded&entity=musicArtist&limit=3&country=US',
-      ));
-      if (r2.statusCode == 200) {
-        final artists = json.decode(r2.body)['results'] ?? [];
-
-        // Búsqueda 3: discografía completa de cada artista encontrado
-        final futures = (artists as List).map((artist) => http.get(Uri.parse(
-          'https://itunes.apple.com/lookup?id=${artist['artistId']}&entity=album&limit=200&country=US',
-        ))).toList();
-
-        final discografias = await Future.wait(futures);
-        for (final r in discografias) {
-          if (r.statusCode == 200) {
-            final albums = (json.decode(r.body)['results'] ?? [])
-                .where((r) => r['wrapperType'] == 'collection')
-                .toList();
-            allResults.addAll(albums);
-          }
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = json.decode(response.body);
+        final List<dynamic> albums = data['results']?['albummatches']?['album'] ?? [];
+        
+        if (albums.isNotEmpty) {
+           final validAlbums = albums.where((a) => a['name'] != '(null)' && a['name'] != '').toList();
+           setState(() {
+            _albumList = validAlbums;
+            _mensaje = ""; // Limpiamos el mensaje si hay resultados
+          });
+        } else {
+          setState(() => _mensaje = "No se encontraron álbumes.");
         }
       }
-
-      // Filtrado
-      final Set<String> vistos = {};
-      final List<dynamic> filtrados = [];
-
-      for (var album in allResults) {
-        final String tipo = album['collectionType'] ?? '';
-        final String nombre = (album['collectionName'] ?? '').toLowerCase();
-        final String artista = (album['artistName'] ?? '').toLowerCase();
-        final int tracks = album['trackCount'] ?? 0;
-        final String id = album['collectionId']?.toString() ?? '';
-
-        bool esAlbum = tipo == 'Album' || tipo == 'Compilation';
-        bool noEsSingle = tracks != 1;
-        bool noEsBasura = !nombre.contains('tribute') &&
-            !nombre.contains('karaoke') &&
-            !nombre.contains('lullaby') &&
-            !nombre.contains('renditions') &&
-            !nombre.contains('cover') &&
-            !nombre.contains('- ep') &&
-            !nombre.contains('- single') &&
-            !artista.contains('tribute') &&
-            !artista.contains('vsq');
-        bool noRepetido = id.isNotEmpty && !vistos.contains(id);
-
-        if (esAlbum && noEsSingle && noEsBasura && noRepetido) {
-          vistos.add(id);
-          filtrados.add(album);
-        }
-      }
-
-      setState(() {
-        _albumList = filtrados;
-        _mensaje = filtrados.isEmpty
-            ? 'No se encontraron álbumes para "$query"'
-            : '${filtrados.length} álbumes encontrados';
-      });
     } catch (e) {
-      setState(() => _mensaje = 'Error de conexión: $e');
+      setState(() => _mensaje = "Fallo de conexión.");
     } finally {
       setState(() => _isLoading = false);
+    }
+  }
+
+  // Extrae la imagen del JSON de Last.fm
+  String _getImageUrl(List<dynamic>? images, String size) {
+    if (images == null || images.isEmpty) return '';
+    try {
+      final imageObj = images.firstWhere((img) => img['size'] == size, orElse: () => images.last);
+      return imageObj['#text'] ?? '';
+    } catch (e) {
+      return '';
     }
   }
 
@@ -115,69 +79,86 @@ class _ExploreViewState extends State<ExploreView> {
       appBar: AppBar(title: const Text('Explorar Discos')),
       body: Column(
         children: [
-          
+          // 1. Barra de Búsqueda Real
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: TextField(
               controller: _searchController,
+              style: const TextStyle(color: Colors.white),
               decoration: InputDecoration(
-                hintText: 'Buscar álbum, artista...',
+                hintText: 'Buscar álbum o artista...',
+                hintStyle: const TextStyle(color: Colors.grey),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: const BorderSide(color: Colors.grey),
+                  borderRadius: BorderRadius.circular(10)
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: const BorderSide(color: Colors.deepPurple, width: 2.0),
+                  borderRadius: BorderRadius.circular(10)
+                ),
                 prefixIcon: const Icon(Icons.search, color: Colors.deepPurple),
-                border: const OutlineInputBorder(),
-                enabledBorder: const OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.grey),
-                ),
-                focusedBorder: const OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.deepPurple, width: 2),
-                ),
+                // Botón de enviar en el teclado o el ícono
                 suffixIcon: IconButton(
-                  icon: const Icon(Icons.search, color: Colors.deepPurple),
-                  onPressed: () => _buscarAlbumes(_searchController.text),
+                  icon: const Icon(Icons.send, color: Colors.deepPurpleAccent),
+                  onPressed: _searchAlbums,
                 ),
               ),
-              onSubmitted: _buscarAlbumes,
+              onSubmitted: (_) => _searchAlbums(), 
             ),
           ),
-
+          
+          // 2. Estado de carga o mensajes
           if (_isLoading)
             const Padding(
-              padding: EdgeInsets.all(20),
+              padding: EdgeInsets.all(20.0),
               child: CircularProgressIndicator(color: Colors.deepPurple),
             )
           else if (_mensaje.isNotEmpty)
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Text(_mensaje,
-                style: const TextStyle(color: Colors.deepPurpleAccent, fontWeight: FontWeight.bold),
-              ),
+              padding: const EdgeInsets.all(20.0),
+              child: Text(_mensaje, style: const TextStyle(color: Colors.grey, fontSize: 16)),
             ),
 
+          // 3. Lista de Resultados Dinámica
           Expanded(
             child: ListView.builder(
               itemCount: _albumList.length,
               itemBuilder: (context, index) {
                 final album = _albumList[index];
+                final String albumName = album['name'] ?? 'Desconocido';
+                final String artistName = album['artist'] ?? 'Artista desconocido';
+                final String imageUrl = _getImageUrl(album['image'], 'large');
+                final String imageExtraLargeUrl = _getImageUrl(album['image'], 'extralarge');
+
                 return Card(
-                  margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
                   color: Colors.grey[900],
+                  margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
                   child: ListTile(
-                    leading: album['artworkUrl100'] != null
-                        ? ClipRRect(
-                            borderRadius: BorderRadius.circular(4),
-                            child: Image.network(album['artworkUrl100'], width: 50, height: 50, fit: BoxFit.cover),
-                          )
-                        : const Icon(Icons.album, size: 50, color: Colors.grey),
-                    title: Text(album['collectionName'] ?? 'Desconocido',
-                      style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
-                    subtitle: Text(album['artistName'] ?? '',
-                      style: const TextStyle(color: Colors.grey)),
+                    leading: imageUrl.isNotEmpty 
+                        ? Image.network(imageUrl, width: 50, height: 50, fit: BoxFit.cover) 
+                        : const Icon(Icons.album, color: Colors.grey, size: 50),
+                    title: Text(albumName, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                    subtitle: Text(artistName, style: const TextStyle(color: Colors.grey)),
                     trailing: const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.deepPurpleAccent),
-                    onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => DetailScreen(album: album),
-                      ),
-                    ),
+                    onTap: () {
+                      
+                      final selectedAlbum = AlbumModel(
+                        id: DateTime.now().millisecondsSinceEpoch.toString(), // Generamos un ID único temporal
+                        title: albumName,
+                        artist: artistName,
+                        imagePath: imageExtraLargeUrl.isNotEmpty ? imageExtraLargeUrl : '', 
+                        description: 'Álbum obtenido desde la base de datos de Last.fm', // Descripción por defecto
+                        );
+
+                      // Navegamos al detalle original
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => DetailScreen(album: selectedAlbum),
+                        ),
+                      );
+                    },
                   ),
                 );
               },

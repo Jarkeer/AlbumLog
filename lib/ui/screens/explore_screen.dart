@@ -79,7 +79,6 @@ class _ExploreViewState extends State<ExploreView> {
       appBar: AppBar(title: const Text('Explorar Discos')),
       body: Column(
         children: [
-          // 1. Barra de Búsqueda Real
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: TextField(
@@ -98,7 +97,6 @@ class _ExploreViewState extends State<ExploreView> {
                   borderRadius: BorderRadius.circular(10)
                 ),
                 prefixIcon: const Icon(Icons.search, color: Colors.deepPurple),
-                // Botón de enviar en el teclado o el ícono
                 suffixIcon: IconButton(
                   icon: const Icon(Icons.send, color: Colors.deepPurpleAccent),
                   onPressed: _searchAlbums,
@@ -144,11 +142,11 @@ class _ExploreViewState extends State<ExploreView> {
                     onTap: () {
                       
                       final selectedAlbum = AlbumModel(
-                        id: DateTime.now().millisecondsSinceEpoch.toString(), // Generamos un ID único temporal
+                        id: DateTime.now().millisecondsSinceEpoch.toString(), 
                         title: albumName,
                         artist: artistName,
                         imagePath: imageExtraLargeUrl.isNotEmpty ? imageExtraLargeUrl : '', 
-                        description: 'Álbum obtenido desde la base de datos de Last.fm', // Descripción por defecto
+                        description: 'Álbum obtenido desde la base de datos de Last.fm', 
                         );
 
                       // Navegamos al detalle original

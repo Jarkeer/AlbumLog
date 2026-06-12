@@ -1,3 +1,4 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
@@ -8,19 +9,30 @@ import 'viewsmodel/preferences_viewmodel.dart';
 import 'ui/screens/preferences_screen.dart';
 import 'viewsmodel/qa_viewmodel.dart';
 import 'ui/screens/qa_screen.dart';
+import 'viewsmodel/auth_viewmodel.dart';
+import 'ui/screens/profile_screen.dart';
+import 'firebase_options.dart';
+void main() async {
+  
+  WidgetsFlutterBinding.ensureInitialized();
+  
 
-void main() {
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
+  // 3. Lanza la app
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => PreferencesViewModel()),
         ChangeNotifierProvider(create: (_) => QaViewModel()),
+        ChangeNotifierProvider(create: (_) => AuthViewModel()),
       ],
-      child: const AlbumLogApp(),
+      child: const AlbumLogApp(), 
     ),
   );
 }
-
 class AlbumLogApp extends StatelessWidget {
   const AlbumLogApp({super.key});
 
@@ -69,6 +81,7 @@ class _MainNavigationWrapperState extends State<MainNavigationWrapper> {
   final List<Widget> _screens = [
     const ExploreView(), 
     const PreferencesScreen(),
+    const ProfileScreen(), 
     const QaScreen(),
   ];
 
@@ -78,6 +91,7 @@ class _MainNavigationWrapperState extends State<MainNavigationWrapper> {
       body: _screens[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
+        type: BottomNavigationBarType.fixed, 
         onTap: (index) {
           setState(() {
             _currentIndex = index;
@@ -86,7 +100,9 @@ class _MainNavigationWrapperState extends State<MainNavigationWrapper> {
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Explorar'),
           BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Configuración'),
-          BottomNavigationBarItem(icon: Icon(Icons.assignment_turned_in), label: 'Beta Test QA'),
+          // Nuevo botón para el Perfil
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Perfil'), 
+          BottomNavigationBarItem(icon: Icon(Icons.assignment_turned_in), label: 'QA'),
         ],
       ),
     );

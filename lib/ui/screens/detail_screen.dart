@@ -1,30 +1,58 @@
 import 'package:flutter/material.dart';
+import 'package:share_plus/share_plus.dart'; 
 import '../../models/album_model.dart';
 
-class DetailScreen extends StatelessWidget {
+
+class DetailScreen extends StatefulWidget {
   final AlbumModel album;
 
   const DetailScreen({super.key, required this.album});
 
   @override
+  State<DetailScreen> createState() => _DetailScreenState();
+}
+
+class _DetailScreenState extends State<DetailScreen> {
+  
+  int _rating = 0;
+
+  
+  void _compartirAlbum() {
+    Share.share(
+      '¡Mira este tremendo disco que encontré en AlbumLog! \n'
+      '${widget.album.title} de ${widget.album.artist}\n\n'
+      '¡Descarga la app y arma tu colección!'
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(album.title)),
+      appBar: AppBar(
+        title: Text(widget.album.title),
+        actions: [
+          
+          IconButton(
+            icon: const Icon(Icons.share),
+            tooltip: 'Compartir álbum',
+            onPressed: _compartirAlbum,
+          ),
+        ],
+      ),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start, 
           children: [
-            // 1. IMAGEN PRINCIPAL INTELIGENTE (Network o Asset)
-            album.imagePath.startsWith('http')
+            widget.album.imagePath.startsWith('http')
                 ? Image.network(
-                    album.imagePath,
+                    widget.album.imagePath,
                     width: double.infinity,
                     height: 350,
                     fit: BoxFit.cover,
                     errorBuilder: (context, error, stackTrace) => const Icon(Icons.broken_image, size: 100),
                   )
                 : Image.asset(
-                    album.imagePath,
+                    widget.album.imagePath,
                     width: double.infinity,
                     height: 350,
                     fit: BoxFit.cover,
@@ -36,16 +64,46 @@ class DetailScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(album.title, style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
-                  Text(album.artist, style: const TextStyle(fontSize: 20, color: Colors.grey)),
+                  Text(widget.album.title, style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
+                  Text(widget.album.artist, style: const TextStyle(fontSize: 20, color: Colors.grey)),
                   const SizedBox(height: 16),
-                  Text(album.description, style: const TextStyle(fontSize: 16)),
-                  const SizedBox(height: 24),
-                  ElevatedButton.icon(
-                    onPressed: () {},
-                    icon: const Icon(Icons.star_rate_rounded),
-                    label: const Text('Calificar y Reseñar'),
-                    style: ElevatedButton.styleFrom(minimumSize: const Size(double.infinity, 50)),
+                  Text(widget.album.description, style: const TextStyle(fontSize: 16)),
+                  const SizedBox(height: 30),
+                  
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.grey[900],
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    child: Column(
+                      children: [
+                        const Text(
+                          '¿Qué te pareció este disco?',
+                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+                        ),
+                        const SizedBox(height: 10),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: List.generate(5, (index) {
+                            return IconButton(
+                              iconSize: 40,
+                              icon: Icon(
+                               
+                                index < _rating ? Icons.star : Icons.star_border,
+                                color: index < _rating ? Colors.amber : Colors.grey,
+                              ),
+                              onPressed: () {
+                                
+                                setState(() {
+                                  _rating = index + 1;
+                                });
+                              },
+                            );
+                          }),
+                        ),
+                      ],
+                    ),
                   ),
                   
                   const SizedBox(height: 32),
@@ -55,15 +113,16 @@ class DetailScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 16),
                   
-                  // 2. LISTA HORIZONTAL (También con imágenes inteligentes)
+                 
                   SizedBox(
                     height: 160,
                     child: ListView.builder(
                       scrollDirection: Axis.horizontal,
+                      
                       itemCount: albums.length, 
                       itemBuilder: (context, index) {
                         final similarAlbum = albums[index];
-                        if (similarAlbum.id == album.id) return const SizedBox.shrink(); 
+                        if (similarAlbum.id == widget.album.id) return const SizedBox.shrink(); 
                         
                         return Container(
                           width: 120,

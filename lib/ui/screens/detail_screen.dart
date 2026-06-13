@@ -1,7 +1,9 @@
+import 'package:album_log/viewsmodel/preferences_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart'; 
+import 'package:provider/provider.dart';
 import '../../models/album_model.dart';
-
+import '../../services/local_preferences_services.dart';
 
 class DetailScreen extends StatefulWidget {
   final AlbumModel album;
@@ -13,10 +15,15 @@ class DetailScreen extends StatefulWidget {
 }
 
 class _DetailScreenState extends State<DetailScreen> {
-  
   int _rating = 0;
+  bool _isSaving = false;
 
-  
+  @override
+  void initState() {
+    super.initState();
+    _rating = LocalPreferencesService().getAlbumRating(widget.album.id);
+  }
+
   void _compartirAlbum() {
     Share.share(
       '¡Mira este tremendo disco que encontré en AlbumLog! \n'
@@ -25,13 +32,49 @@ class _DetailScreenState extends State<DetailScreen> {
     );
   }
 
+  Future<void> _guardarCalificacion() async {
+    if (_rating == 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Por favor, selecciona al menos 1 estrella')),
+      );
+      return;
+    }
+
+    setState(() => _isSaving = true);
+
+    try {
+      
+      await LocalPreferencesService().saveAlbumRating(widget.album.id, _rating);
+      
+      if (mounted) {
+        Provider.of<PreferencesViewModel>(context, listen: false).refreshAlbums();
+      }
+      
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('¡Disco guardado en tu colección local! '),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error al guardar localmente: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    } finally {
+      setState(() => _isSaving = false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.album.title),
         actions: [
-          
           IconButton(
             icon: const Icon(Icons.share),
             tooltip: 'Compartir álbum',
@@ -70,6 +113,7 @@ class _DetailScreenState extends State<DetailScreen> {
                   Text(widget.album.description, style: const TextStyle(fontSize: 16)),
                   const SizedBox(height: 30),
                   
+                  // PANEL DE CALIFICACIÓN Y GUARDADO LOCAL
                   Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
@@ -83,24 +127,50 @@ class _DetailScreenState extends State<DetailScreen> {
                           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
                         ),
                         const SizedBox(height: 10),
+                        
+                        // Sistema de Estrellas Interactivo
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: List.generate(5, (index) {
                             return IconButton(
                               iconSize: 40,
                               icon: Icon(
-                               
                                 index < _rating ? Icons.star : Icons.star_border,
                                 color: index < _rating ? Colors.amber : Colors.grey,
                               ),
                               onPressed: () {
-                                
                                 setState(() {
                                   _rating = index + 1;
                                 });
                               },
                             );
                           }),
+                        ),
+                        const SizedBox(height: 10),
+
+                        // Botón de Guardar en Memoria Local
+                        SizedBox(
+                          width: double.infinity,
+                          height: 45,
+                          child: ElevatedButton(
+                            onPressed: _isSaving ? null : _guardarCalificacion,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.deepPurple,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
+                            child: _isSaving
+                                ? const SizedBox(
+                                    height: 20,
+                                    width: 20,
+                                    child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+                                  )
+                                : const Text(
+                                    'Guardar en mi colección',
+                                    style: TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.bold),
+                                  ),
+                          ),
                         ),
                       ],
                     ),
@@ -113,12 +183,10 @@ class _DetailScreenState extends State<DetailScreen> {
                   ),
                   const SizedBox(height: 16),
                   
-                 
                   SizedBox(
                     height: 160,
                     child: ListView.builder(
                       scrollDirection: Axis.horizontal,
-                      
                       itemCount: albums.length, 
                       itemBuilder: (context, index) {
                         final similarAlbum = albums[index];

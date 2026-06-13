@@ -31,6 +31,8 @@ Instrucciones de Uso:
 - Cuando estés en el detalle de un disco, utiliza la flecha ubicada en la esquina superior izquierda de la pantalla para regresar a la lista principal.
 - Accede a las pestañas "Perfil" para gestionar tu cuenta (en construcción) o "Info" para leer más sobre deldesarrollador y buscar ayuda.
 
+Repoorte QA
+
 ```mermaid
 flowchart TD
     A([Inicio: Pantalla Principal]) --> B[Ingresar a la pestaña de Búsqueda]

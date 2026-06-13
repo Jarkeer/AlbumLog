@@ -6,12 +6,12 @@ import 'dart:convert';
 import 'package:share_plus/share_plus.dart';
 import 'ui/screens/explore_screen.dart';
 import 'viewsmodel/preferences_viewmodel.dart';
-import 'ui/screens/preferences_screen.dart';
 import 'viewsmodel/qa_viewmodel.dart';
 import 'ui/screens/qa_screen.dart';
 import 'viewsmodel/auth_viewmodel.dart';
 import 'ui/screens/profile_screen.dart';
 import 'firebase_options.dart';
+import 'services/local_preferences_services.dart';
 void main() async {
   
   WidgetsFlutterBinding.ensureInitialized();
@@ -20,8 +20,7 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-
-  // 3. Lanza la app
+  await LocalPreferencesService().init();
   runApp(
     MultiProvider(
       providers: [
@@ -77,12 +76,10 @@ class MainNavigationWrapper extends StatefulWidget {
 class _MainNavigationWrapperState extends State<MainNavigationWrapper> {
   int _currentIndex = 0;
 
-  
   final List<Widget> _screens = [
-    const ExploreView(), 
-    const PreferencesScreen(),
+    const ExploreView(),   
     const ProfileScreen(), 
-    const QaScreen(),
+    const QaScreen(),      
   ];
 
   @override
@@ -91,18 +88,26 @@ class _MainNavigationWrapperState extends State<MainNavigationWrapper> {
       body: _screens[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
-        type: BottomNavigationBarType.fixed, 
+        type: BottomNavigationBarType.fixed,
         onTap: (index) {
           setState(() {
             _currentIndex = index;
           });
         },
+        
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Explorar'),
-          BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Configuración'),
-          // Nuevo botón para el Perfil
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Perfil'), 
-          BottomNavigationBarItem(icon: Icon(Icons.assignment_turned_in), label: 'QA'),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.search),
+            label: 'Explorar',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: 'Perfil',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.verified_user_outlined), 
+            label: 'QA',
+          ),
         ],
       ),
     );

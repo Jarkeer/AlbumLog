@@ -12,6 +12,8 @@ import 'viewsmodel/auth_viewmodel.dart';
 import 'ui/screens/profile_screen.dart';
 import 'firebase_options.dart';
 import 'services/local_preferences_services.dart';
+import 'ui/screens/settings_screen.dart';
+import 'ui/screens/about_screen.dart';
 void main() async {
   
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,7 +28,7 @@ void main() async {
       providers: [
         ChangeNotifierProvider(create: (_) => PreferencesViewModel()),
         ChangeNotifierProvider(create: (_) => QaViewModel()),
-        ChangeNotifierProvider(create: (_) => AuthViewModel()),
+        ChangeNotifierProvider(create: (_) => AuthViewModel()), 
       ],
       child: const AlbumLogApp(), 
     ),
@@ -80,6 +82,8 @@ class _MainNavigationWrapperState extends State<MainNavigationWrapper> {
     const ExploreView(),   
     const ProfileScreen(), 
     const QaScreen(),      
+    const SettingsScreen(),
+    const AboutScreen(),
   ];
 
   @override
@@ -107,6 +111,14 @@ class _MainNavigationWrapperState extends State<MainNavigationWrapper> {
           BottomNavigationBarItem(
             icon: Icon(Icons.verified_user_outlined), 
             label: 'QA',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.settings),
+            label: 'Ajustes',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.info_outline),
+            label: 'Acerca',
           ),
         ],
       ),

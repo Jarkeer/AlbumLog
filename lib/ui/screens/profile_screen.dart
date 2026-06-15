@@ -1,7 +1,7 @@
 import 'package:album_log/viewsmodel/preferences_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../viewsmodel/auth_viewmodel.dart'; // Importamos el gestor de autenticación
+import '../../viewsmodel/auth_viewmodel.dart'; 
 import '../../services/local_preferences_services.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -149,9 +149,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       
                       const SizedBox(height: 24),
 
-                     
+                    
                       const Text(
-                        'Preferencias de Usuario',
+                        'Mi Cuenta y Preferencias',
                         style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.deepPurpleAccent),
                       ),
                       const SizedBox(height: 12),
@@ -168,7 +168,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                       const SizedBox(height: 16),
 
-                    
+                      // Selector de Género
                       DropdownButtonFormField<String>(
                         initialValue: _genres.contains(preferencesVM.favoriteGenre) ? preferencesVM.favoriteGenre : 'Todos',
                         decoration: const InputDecoration(
@@ -188,20 +188,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           }
                         },
                       ),
-                      const SizedBox(height: 8),
-
-                      // Interruptor de Modo Oscuro
-                      SwitchListTile(
-                        title: const Text('Modo Oscuro'),
-                        secondary: const Icon(Icons.dark_mode),
-                        value: preferencesVM.isDarkMode,
-                        activeColor: Colors.deepPurpleAccent,
-                        onChanged: (bool value) => preferencesVM.toggleDarkMode(value),
-                      ),
                       
                       const Divider(height: 40),
 
-        
+                      
                       Row(
                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [

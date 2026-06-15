@@ -24,9 +24,8 @@ class QaViewModel extends ChangeNotifier {
       });
 
     } catch (e) {
-     
       categorisedQuestions = {
-        "🚨 ERROR DE CARGA": [
+        "ERROR DE CARGA": [
           QuestionModel(
             title: "Fallo técnico: $e",
             value: 0,
@@ -58,17 +57,16 @@ class QaViewModel extends ChangeNotifier {
       }
     });
 
-    final Uri emailLaunchUri = Uri(
-      scheme: 'mailto',
-      path: 'javieralonso1702@gmail.com', 
-      queryParameters: {
-        'subject': 'Evaluación QA - Proyecto AlbumLog', 
-        'body': emailBody.toString(), 
-      },
+   
+    final String encodedSubject = Uri.encodeComponent('Evaluación QA - Proyecto AlbumLog');
+    final String encodedBody = Uri.encodeComponent(emailBody.toString());
+
+    
+    final Uri emailLaunchUri = Uri.parse(
+      'mailto:javieralonso1702@gmail.com?subject=$encodedSubject&body=$encodedBody'
     );
 
     try {
-      // Forzamos la apertura directa como aplicación externa
       await launchUrl(emailLaunchUri, mode: LaunchMode.externalApplication);
     } catch (e) {
       print('Error crítico: No se pudo abrir el cliente de correo. $e');

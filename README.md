@@ -198,4 +198,4 @@ A partir de las métricas recopiladas, se levantó el siguiente análisis técni
 ## Distribución y Descarga Directa
 
 El archivo ejecutable final:
-**[Descargar AlbumLog_v1.0.apk](./apk/AlbumLog_v1.0.apk)**
+**[Descargar AlbumLog_v1.0.apk](./apk/AlbumLog.apk)**

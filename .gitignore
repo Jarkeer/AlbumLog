@@ -1,8 +1,47 @@
+# Miscellaneous
+*.class
+*.log
+*.pyc
+*.swp
+.DS_Store
+.atom/
+.buildlog/
+.history
+.svn/
+
+# IntelliJ related
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# The .vscode folder contains a workspace specific configuration
+.vscode/
+
+# Flutter/Dart/Pub related
+**/doc/api/
+**/ios/Flutter/.last_build_id
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+/build/
+
+# Web related
+lib/generated_plugin_registrant.dart
+
+# Symbolication related
+app.*.symbols
+
+# Obfuscation related
+app.*.map.json
+
 # Android Studio will place build artifacts here
 /android/app/debug
 /android/app/profile
 /android/app/release
--
+
 
 # Variables de entorno (Contraseñas, API Keys como Last.fm)
 .env
@@ -12,11 +51,9 @@
 *.keystore
 *.jks
 android/key.properties
-**/build/
-**/.dart_tool/
 
-# ( Si decides mantener Firebase ignorado, descomenta estas líneas, 
-# pero recuerda que el proyecto no compilará para quien lo descargue:
+# (Si decides mantener Firebase ignorado, descomenta estas líneas, 
+# pero recuerda que el proyecto no compilará para quien lo descargue sin el .env):
 # android/app/google-services.json
 # ios/Runner/GoogleService-Info.plist
 # macos/Runner/GoogleService-Info.plist

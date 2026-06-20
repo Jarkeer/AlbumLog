@@ -199,3 +199,9 @@ A partir de las métricas recopiladas, se levantó el siguiente análisis técni
 
 El archivo ejecutable final:
 **[Descargar AlbumLog.apk](https://github.com/Jarkeer/AlbumLog/raw/main/apk/AlbumLog.apk)**
+
+Comandos para crear el APK ya que no funciona:
+```bash
+flutter clean
+flutter pub get
+flutter build apk --release

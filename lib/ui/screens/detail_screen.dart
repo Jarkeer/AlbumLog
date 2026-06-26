@@ -3,25 +3,42 @@ import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart'; 
 import 'package:provider/provider.dart';
 import '../../models/album_model.dart';
+import '../../models/review_model.dart'; 
 import '../../services/local_preferences_services.dart';
 
 class DetailScreen extends StatefulWidget {
   final AlbumModel album;
 
   const DetailScreen({super.key, required this.album});
-
+  
   @override
   State<DetailScreen> createState() => _DetailScreenState();
 }
 
 class _DetailScreenState extends State<DetailScreen> {
+  final TextEditingController _reviewController = TextEditingController();
   int _rating = 0;
   bool _isSaving = false;
 
   @override
   void initState() {
     super.initState();
-    _rating = LocalPreferencesService().getAlbumRating(widget.album.id);
+    _cargarRatingGuardado();
+  }
+
+  Future<void> _cargarRatingGuardado() async {
+    final ratingGuardado = await LocalPreferencesService().getAlbumRating(widget.album.id);
+    if (mounted) {
+      setState(() {
+        _rating = ratingGuardado;
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _reviewController.dispose(); 
+    super.dispose();
   }
 
   void _compartirAlbum() {
@@ -43,8 +60,18 @@ class _DetailScreenState extends State<DetailScreen> {
     setState(() => _isSaving = true);
 
     try {
+      final reviewText = _reviewController.text.trim();
       
-      await LocalPreferencesService().saveAlbumRating(widget.album.id, _rating);
+      // Instanciamos el modelo con los datos recolectados en la vista
+      final newReview = ReviewModel(
+        albumId: widget.album.id,
+        albumTitle: widget.album.title,
+        rating: _rating,
+        reviewText: reviewText.isNotEmpty ? reviewText : null,
+      );
+
+      
+      await LocalPreferencesService().saveAlbumReview(newReview);
       
       if (mounted) {
         Provider.of<PreferencesViewModel>(context, listen: false).refreshAlbums();
@@ -53,7 +80,7 @@ class _DetailScreenState extends State<DetailScreen> {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('¡Disco guardado en tu colección local! '),
+          content: Text('¡Reseña guardada en tu colección local!'),
           backgroundColor: Colors.green,
         ),
       );
@@ -113,7 +140,7 @@ class _DetailScreenState extends State<DetailScreen> {
                   Text(widget.album.description, style: const TextStyle(fontSize: 16)),
                   const SizedBox(height: 30),
                   
-                  // PANEL DE CALIFICACIÓN Y GUARDADO LOCAL
+                  // PANEL DE CALIFICACIÓN Y RESEÑA
                   Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
@@ -148,6 +175,28 @@ class _DetailScreenState extends State<DetailScreen> {
                         ),
                         const SizedBox(height: 10),
 
+                        // Campo de texto para la reseña
+                        TextField(
+                          controller: _reviewController,
+                          maxLines: 3,
+                          maxLength: 300,
+                          style: const TextStyle(color: Colors.white),
+                          decoration: InputDecoration(
+                            labelText: 'Escribe tu reseña (opcional)',
+                            labelStyle: const TextStyle(color: Colors.grey),
+                            alignLabelWithHint: true,
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: Colors.grey.shade700),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: const BorderSide(color: Colors.deepPurple),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+
                         // Botón de Guardar en Memoria Local
                         SizedBox(
                           width: double.infinity,
@@ -167,7 +216,7 @@ class _DetailScreenState extends State<DetailScreen> {
                                     child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
                                   )
                                 : const Text(
-                                    'Guardar en mi colección',
+                                    'Publicar Reseña',
                                     style: TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.bold),
                                   ),
                           ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../models/review_model.dart'; 
 import '../services/local_preferences_services.dart';
 
 class PreferencesViewModel extends ChangeNotifier {
@@ -8,13 +9,13 @@ class PreferencesViewModel extends ChangeNotifier {
   String _username = '';
   bool _isDarkMode = true;
   String _favoriteGenre = 'Rock';
-  List<String> _ratedAlbums = [];
+  List<ReviewModel> _savedReviews = [];
 
   bool get isLoading => _isLoading;
   String get username => _username;
   bool get isDarkMode => _isDarkMode;
   String get favoriteGenre => _favoriteGenre;
-  List<String> get ratedAlbums => _ratedAlbums;
+  List<ReviewModel> get savedReviews => _savedReviews;
 
   PreferencesViewModel() {
     loadPreferences();
@@ -22,12 +23,11 @@ class PreferencesViewModel extends ChangeNotifier {
 
   Future<void> loadPreferences() async {
     _isLoading = true;
-    notifyListeners();
-
-    _username = _service.getUsername();
-    _isDarkMode = _service.isDarkMode();
-    _favoriteGenre = _service.getFavoriteGenre();
-    _ratedAlbums = _service.getAllRatedAlbums();
+  
+    _username = await _service.getUserName();
+    _isDarkMode = await _service.getDarkMode();
+    _favoriteGenre = await _service.getFavoriteGenre();
+    _savedReviews = await _service.getAllSavedReviews();
 
     _isLoading = false;
     notifyListeners();
@@ -35,7 +35,7 @@ class PreferencesViewModel extends ChangeNotifier {
 
   Future<void> updateUsername(String newUsername) async {
     _username = newUsername;
-    await _service.saveUsername(newUsername);
+    await _service.saveUserName(newUsername);
     notifyListeners();
   }
 
@@ -51,17 +51,25 @@ class PreferencesViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> saveReview(ReviewModel review) async {
+    try {
+      await _service.saveAlbumReview(review);
+      await refreshAlbums(); 
+    } catch (e) {
+      debugPrint('Error al guardar la reseña: $e');
+    }
+  }
+
   Future<void> removeAlbum(String albumId) async {
-    await _service.deleteRating(albumId);
-    _ratedAlbums = _service.getAllRatedAlbums();
-    notifyListeners();
+    await _service.deleteRating(albumId); 
+    await refreshAlbums();
   }
 
   Future<void> refreshAlbums() async {
     _isLoading = true;
     notifyListeners();
     
-    _ratedAlbums = _service.getAllRatedAlbums();
+    _savedReviews = await _service.getAllSavedReviews();
     
     _isLoading = false;
     notifyListeners();

@@ -1,70 +1,101 @@
+import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../models/review_model.dart';
 
 class LocalPreferencesService {
-  static final LocalPreferencesService _instance = LocalPreferencesService._internal();
-  factory LocalPreferencesService() => _instance;
-  LocalPreferencesService._internal();
-
-  SharedPreferences? _prefs;
-
-  Future<void> init() async {
-    _prefs = await SharedPreferences.getInstance();
-  }
-
-
-
-  Future<void> saveAlbumRating(String albumId, int rating) async {
-    await _prefs?.setInt(albumId, rating);
-  }
-
-  int getAlbumRating(String albumId) {
-  // Obtenemos el valor bruto de la memoria sin forzar que sea un número (getInt)
-  final value = _prefs?.get(albumId);
-
-  // Comprobamos si el valor es realmente un número entero (int)
-  if (value is int) {
-    return value;
-  }
-
-  // Si es un texto (como "username") o no existe, retornamos 0 estrellas
-  return 0;
-}
-  List<String> getAllRatedAlbums() {
-    final keys = _prefs?.getKeys() ?? {};
-    return keys.where((key) => 
-      key != 'favorite_genre' && 
-      key != 'username' && 
-      key != 'is_dark_mode'
-    ).toList();
-  }
-
-  Future<void> deleteRating(String albumId) async {
-    await _prefs?.remove(albumId);
-  }
-
   
+  // Claves para las preferencias simples
+  static const String _darkModeKey = 'isDarkMode';
+  static const String _userNameKey = 'userName';
+  static const String _favoriteGenreKey = 'favoriteGenre';
+  static const String _reviewsKey = 'mis_resenas';
 
-  Future<void> saveUsername(String username) async {
-    await _prefs?.setString('username', username);
+
+  // PREFERENCIAS DE USUARIO 
+
+
+  Future<bool> getDarkMode() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(_darkModeKey) ?? true; 
   }
 
-  String getUsername() {
-    return _prefs?.getString('username') ?? 'Melómano';
+  Future<void> saveDarkMode(bool isDark) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_darkModeKey, isDark);
   }
 
-  Future<void> saveDarkMode(bool isDarkMode) async {
-    await _prefs?.setBool('is_dark_mode', isDarkMode);
+  Future<String> getUserName() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(_userNameKey) ?? 'Nuevo Usuario';
   }
 
-  bool isDarkMode() {
-    return _prefs?.getBool('is_dark_mode') ?? true; 
+  Future<void> saveUserName(String name) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_userNameKey, name);
+  }
+
+  Future<String> getFavoriteGenre() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(_favoriteGenreKey) ?? 'Rock';
   }
 
   Future<void> saveFavoriteGenre(String genre) async {
-    await _prefs?.setString('favorite_genre', genre);
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_favoriteGenreKey, genre);
   }
 
-  String getFavoriteGenre() {
-    return _prefs?.getString('favorite_genre') ?? 'Rock';
+  // SISTEMA DE RESEÑAS Y CALIFICACIONES
+
+  // NUEVO: Guardar la reseña completa convirtiendo el modelo a JSON
+  Future<void> saveAlbumReview(ReviewModel review) async {
+    final prefs = await SharedPreferences.getInstance();
+    List<String> savedReviewsStr = prefs.getStringList(_reviewsKey) ?? [];
+    
+    // Eliminamos la reseña anterior de este mismo disco 
+    savedReviewsStr.removeWhere((item) {
+      final map = jsonDecode(item);
+      return map['albumId'] == review.albumId;
+    });
+
+    // Agregamos la nueva reseña
+    savedReviewsStr.add(jsonEncode(review.toMap()));
+    await prefs.setStringList(_reviewsKey, savedReviewsStr);
+  }
+
+  // NUEVO: Obtener todas las reseñas como lista de ReviewModel
+  Future<List<ReviewModel>> getAllSavedReviews() async {
+    final prefs = await SharedPreferences.getInstance();
+    List<String> savedReviewsStr = prefs.getStringList(_reviewsKey) ?? [];
+    
+    return savedReviewsStr.map((item) {
+      return ReviewModel.fromMap(jsonDecode(item));
+    }).toList();
+  }
+
+
+  Future<int> getAlbumRating(String albumId) async {
+    final prefs = await SharedPreferences.getInstance();
+    List<String> savedReviewsStr = prefs.getStringList(_reviewsKey) ?? [];
+    
+    for (String item in savedReviewsStr) {
+      final map = jsonDecode(item);
+      if (map['albumId'] == albumId) {
+        return map['rating'] as int;
+      }
+    }
+    return 0; // Retorna 0 si no lo ha calificado
+  }
+
+  
+  Future<void> deleteRating(String albumId) async {
+    final prefs = await SharedPreferences.getInstance();
+    List<String> savedReviewsStr = prefs.getStringList(_reviewsKey) ?? [];
+
+    savedReviewsStr.removeWhere((item) {
+      final map = jsonDecode(item);
+      return map['albumId'] == albumId;
+    });
+
+    await prefs.setStringList(_reviewsKey, savedReviewsStr);
   }
 }

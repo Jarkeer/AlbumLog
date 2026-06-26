@@ -2,7 +2,6 @@ import 'package:album_log/viewsmodel/preferences_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../viewsmodel/auth_viewmodel.dart'; 
-import '../../services/local_preferences_services.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -200,14 +199,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.deepPurpleAccent),
                           ),
                           Chip(
-                            label: Text('${preferencesVM.ratedAlbums.length} discos'),
+                            label: Text('${preferencesVM.savedReviews.length} discos'),
                             backgroundColor: Colors.deepPurple.withOpacity(0.2),
                           ),
                         ],
                       ),
                       const SizedBox(height: 12),
 
-                      preferencesVM.ratedAlbums.isEmpty
+                      preferencesVM.savedReviews.isEmpty
                           ? const Center(
                               child: Padding(
                                 padding: EdgeInsets.symmetric(vertical: 30),
@@ -221,10 +220,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           : ListView.builder(
                               shrinkWrap: true,
                               physics: const NeverScrollableScrollPhysics(),
-                              itemCount: preferencesVM.ratedAlbums.length,
+                              itemCount: preferencesVM.savedReviews.length,
                               itemBuilder: (context, index) {
-                                final albumId = preferencesVM.ratedAlbums[index];
-                                final rating = LocalPreferencesService().getAlbumRating(albumId);
+                                // Obtenemos el modelo completo
+                                final review = preferencesVM.savedReviews[index];
 
                                 return Card(
                                   margin: const EdgeInsets.symmetric(vertical: 6),
@@ -233,20 +232,42 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       backgroundColor: Colors.deepPurple,
                                       child: Icon(Icons.album, color: Colors.white),
                                     ),
-                                    title: Text('Álbum ID: $albumId'),
-                                    subtitle: Row(
-                                      children: List.generate(5, (starIndex) {
-                                        return Icon(
-                                          starIndex < rating ? Icons.star : Icons.star_border,
-                                          color: Colors.amber,
-                                          size: 18,
-                                        );
-                                      }),
+                                    // Usamos el título que viene en el modelo
+                                    title: Text(
+                                      review.albumTitle,
+                                      style: const TextStyle(fontWeight: FontWeight.bold),
+                                    ),
+                                    subtitle: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        const SizedBox(height: 4),
+                                        // Estrellas
+                                        Row(
+                                          children: List.generate(5, (starIndex) {
+                                            return Icon(
+                                              starIndex < review.rating ? Icons.star : Icons.star_border,
+                                              color: Colors.amber,
+                                              size: 18,
+                                            );
+                                          }),
+                                        ),
+                                        // Texto de la reseña (condicional)
+                                        if (review.reviewText != null && review.reviewText!.isNotEmpty) ...[
+                                          const SizedBox(height: 8),
+                                          Text(
+                                            '"${review.reviewText}"',
+                                            style: const TextStyle(
+                                              fontStyle: FontStyle.italic,
+                                              color: Colors.grey,
+                                            ),
+                                          ),
+                                        ]
+                                      ],
                                     ),
                                     trailing: IconButton(
                                       icon: const Icon(Icons.delete_outline, color: Colors.redAccent),
                                       onPressed: () {
-                                        preferencesVM.removeAlbum(albumId);
+                                        preferencesVM.removeAlbum(review.albumId);
                                         ScaffoldMessenger.of(context).showSnackBar(
                                           const SnackBar(content: Text('Registro eliminado de la memoria local')),
                                         );

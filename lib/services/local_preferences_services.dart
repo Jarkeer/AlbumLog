@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/review_model.dart';
 
@@ -53,10 +54,15 @@ class LocalPreferencesService {
     
     // Eliminamos la reseña anterior de este mismo disco 
     savedReviewsStr.removeWhere((item) {
-      final map = jsonDecode(item);
-      return map['albumId'] == review.albumId;
+      try {
+        final map = jsonDecode(item);
+        return map['albumId'] == review.albumId;
+      } catch (e) {
+        debugPrint("JSON corrupto al eliminar: $e");
+        return true;
+      }
     });
-
+    
     // Agregamos la nueva reseña
     savedReviewsStr.add(jsonEncode(review.toMap()));
     await prefs.setStringList(_reviewsKey, savedReviewsStr);
@@ -66,10 +72,19 @@ class LocalPreferencesService {
   Future<List<ReviewModel>> getAllSavedReviews() async {
     final prefs = await SharedPreferences.getInstance();
     List<String> savedReviewsStr = prefs.getStringList(_reviewsKey) ?? [];
-    
-    return savedReviewsStr.map((item) {
-      return ReviewModel.fromMap(jsonDecode(item));
-    }).toList();
+
+    List<ReviewModel> reviews = [];
+
+    for (String item in savedReviewsStr) {
+      try {
+        final map = jsonDecode(item);
+        reviews.add(ReviewModel.fromMap(map));
+      } catch (e) {
+        debugPrint("Error leyendo reseña: $e");
+      }
+    }
+
+    return reviews;
   }
 
 
@@ -78,9 +93,14 @@ class LocalPreferencesService {
     List<String> savedReviewsStr = prefs.getStringList(_reviewsKey) ?? [];
     
     for (String item in savedReviewsStr) {
-      final map = jsonDecode(item);
-      if (map['albumId'] == albumId) {
-        return map['rating'] as int;
+      try {
+        final map = jsonDecode(item);
+
+        if (map['albumId'] == albumId) {
+          return map['rating'] as int;
+        }
+      } catch (e) {
+        debugPrint("Error leyendo rating: $e");
       }
     }
     return 0; // Retorna 0 si no lo ha calificado
@@ -92,10 +112,15 @@ class LocalPreferencesService {
     List<String> savedReviewsStr = prefs.getStringList(_reviewsKey) ?? [];
 
     savedReviewsStr.removeWhere((item) {
-      final map = jsonDecode(item);
-      return map['albumId'] == albumId;
+      try {
+        final map = jsonDecode(item);
+        return map['albumId'] == albumId;
+      } catch (e) {
+        debugPrint("Error borrando rating: $e");
+        return true;
+      }
     });
-
+    
     await prefs.setStringList(_reviewsKey, savedReviewsStr);
   }
 }

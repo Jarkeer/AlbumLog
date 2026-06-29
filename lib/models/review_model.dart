@@ -22,10 +22,12 @@ class ReviewModel {
 
   factory ReviewModel.fromMap(Map<String, dynamic> map) {
     return ReviewModel(
-      albumId: map['albumId'],
-      albumTitle: map['albumTitle'],
-      rating: map['rating'],
-      reviewText: map['reviewText'],
+      albumId: map['albumId']?.toString() ?? '',
+      albumTitle: map['albumTitle']?.toString() ?? 'Sin título',
+      rating: map['rating'] is int
+          ? map['rating']
+          : int.tryParse(map['rating']?.toString() ?? '0') ?? 0,
+      reviewText: map['reviewText']?.toString(),
     );
   }
 }

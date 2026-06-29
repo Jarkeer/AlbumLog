@@ -23,11 +23,16 @@ class PreferencesViewModel extends ChangeNotifier {
 
   Future<void> loadPreferences() async {
     _isLoading = true;
-  
-    _username = await _service.getUserName();
-    _isDarkMode = await _service.getDarkMode();
-    _favoriteGenre = await _service.getFavoriteGenre();
-    _savedReviews = await _service.getAllSavedReviews();
+    notifyListeners();
+
+    try {
+      _username = await _service.getUserName();
+      _isDarkMode = await _service.getDarkMode();
+      _favoriteGenre = await _service.getFavoriteGenre();
+      _savedReviews = await _service.getAllSavedReviews();
+    } catch (e) {
+      debugPrint("Error cargando preferencias: $e");
+    }
 
     _isLoading = false;
     notifyListeners();

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'dart:async';
 import 'package:share_plus/share_plus.dart';
 import 'ui/screens/explore_screen.dart';
 import 'viewsmodel/preferences_viewmodel.dart';
@@ -16,23 +17,41 @@ import 'ui/screens/settings_screen.dart';
 import 'ui/screens/about_screen.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 void main() async {
-  
   WidgetsFlutterBinding.ensureInitialized();
-  await dotenv.load(fileName: ".env");
 
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
-  runApp(
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => PreferencesViewModel()),
-        ChangeNotifierProvider(create: (_) => QaViewModel()),
-        ChangeNotifierProvider(create: (_) => AuthViewModel()), 
-      ],
-      child: const AlbumLogApp(), 
-    ),
-  );
+  FlutterError.onError = (FlutterErrorDetails details) {
+    FlutterError.presentError(details);
+    debugPrint("Flutter Error: ${details.exception}");
+  };
+
+  runZonedGuarded(() async {
+    try {
+      await dotenv.load(fileName: ".env");
+    } catch (e) {
+      debugPrint("Error cargando .env: $e");
+    }
+
+    try {
+      await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+      );
+    } catch (e) {
+      debugPrint("Error Firebase: $e");
+    }
+
+    runApp(
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider(create: (_) => PreferencesViewModel()),
+          ChangeNotifierProvider(create: (_) => QaViewModel()),
+          ChangeNotifierProvider(create: (_) => AuthViewModel()),
+        ],
+        child: const AlbumLogApp(),
+      ),
+    );
+  }, (error, stackTrace) {
+    debugPrint("ERROR GLOBAL: $error");
+  });
 }
 class AlbumLogApp extends StatelessWidget {
   const AlbumLogApp({super.key});
@@ -41,6 +60,16 @@ class AlbumLogApp extends StatelessWidget {
   Widget build(BuildContext context) {
     final prefsVM = Provider.of<PreferencesViewModel>(context);
     return MaterialApp(
+      builder: (context, child) {
+        ErrorWidget.builder = (FlutterErrorDetails details) {
+          return const Scaffold(
+            body: Center(
+              child: Text("Algo salió mal"),
+            ),
+          );
+        };
+        return child!;
+      },
       debugShowCheckedModeBanner: false,
       title: 'AlbumLog',
       themeMode: prefsVM.isDarkMode ? ThemeMode.dark : ThemeMode.light,

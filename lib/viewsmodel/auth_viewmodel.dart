@@ -52,7 +52,8 @@ class AuthViewModel extends ChangeNotifier {
       await _auth.signInWithCredential(credential);
 
     } catch (e) {
-      print("Error en Google Sign-In: $e");
+      debugPrint("Error en Google Sign-In: $e");
+      rethrow;
     } finally {
       _isLoading = false;
       notifyListeners();

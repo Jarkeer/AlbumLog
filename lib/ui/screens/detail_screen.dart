@@ -92,8 +92,10 @@ class _DetailScreenState extends State<DetailScreen> {
         ),
       );
     } finally {
-      setState(() => _isSaving = false);
-    }
+        if (mounted) {
+          setState(() => _isSaving = false);
+        }
+      }
   }
 
   @override

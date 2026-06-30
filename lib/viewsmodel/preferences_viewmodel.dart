@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/review_model.dart'; 
 import '../services/local_preferences_services.dart';
-
+import '../services/firebase_service.dart';
 class PreferencesViewModel extends ChangeNotifier {
   final LocalPreferencesService _service = LocalPreferencesService();
 
@@ -10,12 +10,13 @@ class PreferencesViewModel extends ChangeNotifier {
   bool _isDarkMode = true;
   String _favoriteGenre = 'Rock';
   List<ReviewModel> _savedReviews = [];
-
+  
   bool get isLoading => _isLoading;
   String get username => _username;
   bool get isDarkMode => _isDarkMode;
   String get favoriteGenre => _favoriteGenre;
   List<ReviewModel> get savedReviews => _savedReviews;
+  final FirebaseService _firebaseService = FirebaseService();
 
   PreferencesViewModel() {
     loadPreferences();
@@ -51,12 +52,18 @@ class PreferencesViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> saveReview(ReviewModel review) async {
+  Future<void> saveReview(ReviewModel review, {String? userId}) async {
     try {
-      await _service.saveAlbumReview(review);
+      await _service.saveAlbumReview(review); 
+      if (userId != null && userId.isNotEmpty) {
+        await _firebaseService.saveReviewToCloud(review, userId);
+        debugPrint('Reseña respaldada exitosamente en Firestore');
+      }
+
       await refreshAlbums(); 
     } catch (e) {
       debugPrint('Error al guardar la reseña: $e');
+      rethrow; 
     }
   }
 

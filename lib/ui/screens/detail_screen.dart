@@ -5,10 +5,10 @@ import 'package:provider/provider.dart';
 import '../../models/album_model.dart';
 import '../../models/review_model.dart'; 
 import '../../services/local_preferences_services.dart';
-
+import '../../viewsmodel/auth_viewmodel.dart';
 class DetailScreen extends StatefulWidget {
   final AlbumModel album;
-
+  
   const DetailScreen({super.key, required this.album});
   
   @override
@@ -49,7 +49,7 @@ class _DetailScreenState extends State<DetailScreen> {
     );
   }
 
-  Future<void> _guardarCalificacion() async {
+ Future<void> _guardarCalificacion() async {
     if (_rating == 0) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Por favor, selecciona al menos 1 estrella')),
@@ -71,23 +71,30 @@ class _DetailScreenState extends State<DetailScreen> {
       );
 
       
-      await LocalPreferencesService().saveAlbumReview(newReview);
+      final authVM = Provider.of<AuthViewModel>(context, listen: false);
+      final userId = authVM.user?.uid; 
+
       
-      if (mounted) {
-        Provider.of<PreferencesViewModel>(context, listen: false).refreshAlbums();
-      }
+      await Provider.of<PreferencesViewModel>(context, listen: false)
+          .saveReview(newReview, userId: userId);
       
       if (!mounted) return;
+      
+      
+      final mensaje = userId != null 
+          ? '¡Reseña guardada localmente y respaldada en la nube!'
+          : '¡Reseña guardada en tu colección local! (Inicia sesión para respaldar)';
+
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('¡Reseña guardada en tu colección local!'),
+        SnackBar(
+          content: Text(mensaje),
           backgroundColor: Colors.green,
         ),
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Error al guardar localmente: $e'),
+          content: Text('Error al guardar: $e'),
           backgroundColor: Colors.red,
         ),
       );

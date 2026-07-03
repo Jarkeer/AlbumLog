@@ -193,6 +193,17 @@ A partir de las métricas recopiladas, se levantó el siguiente análisis técni
 1. **Enriquecimiento de Dominio:** Escalar el consumo de la API de Last.fm para incluir listas de canciones (Tracklists), duración total del disco y enlaces directos a plataformas de Streaming.
 2. **Sistema de Diseño (UI/UX):** Implementar transiciones animadas, pantallas de carga y optimizar el contraste del Modo Oscuro.
 
+### .env necesario para funcionamiento
+Para que la aplicaion funcione es necesario un .env creado en la carpeta mas externa del proyecto que contenga las clases de acceso a las bases de datos correspondientes, tienen el siguiente formato
+
+FIREBASE_API_KEY_WEB=
+FIREBASE_API_KEY_ANDROID=
+FIREBASE_API_KEY_IOS=
+FIREBASE_API_KEY_MACOS=
+FIREBASE_API_KEY_WINDOWS=
+
+Por obvios motivos no se proporcionara las claves de nuestra base de datos, pero si quiere puede usar sus propias claves de firebase para usar su propia base de datos, para obtener sus claves primero swvw ingeresar a ["url"](https://www.last.fm/api/authentication), luego hacer click en apply for a key e ingresar los datos que se le piden y te dan la key
+
 ---
 
 ## Distribución y Descarga Directa

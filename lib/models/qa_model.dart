@@ -14,7 +14,7 @@ class QuestionModel {
   factory QuestionModel.fromJson(Map<String, dynamic> json) {
     return QuestionModel(
       title: json['titulo']?.toString() ?? "Pregunta sin título (Revisa el JSON)",
-      value: (json['valor'] ?? 0 as num).toDouble(),
+      value: ((json['valor'] ?? 0) as num).toDouble(),
       min: json['min']?.toString() ?? "0",
       max: json['max']?.toString() ?? "5",
     );

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'dart:async';
 import 'package:share_plus/share_plus.dart';
 import 'ui/screens/explore_screen.dart';
 import 'viewsmodel/preferences_viewmodel.dart';
@@ -18,7 +19,6 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await dotenv.load(fileName: ".env");
 
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
@@ -42,6 +42,16 @@ class AlbumLogApp extends StatelessWidget {
   Widget build(BuildContext context) {
     final prefsVM = Provider.of<PreferencesViewModel>(context);
     return MaterialApp(
+      builder: (context, child) {
+        ErrorWidget.builder = (FlutterErrorDetails details) {
+          return const Scaffold(
+            body: Center(
+              child: Text("Algo salió mal"),
+            ),
+          );
+        };
+        return child!;
+      },
       debugShowCheckedModeBanner: false,
       title: 'AlbumLog',
       themeMode: prefsVM.isDarkMode ? ThemeMode.dark : ThemeMode.light,

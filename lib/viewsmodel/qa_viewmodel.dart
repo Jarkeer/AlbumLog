@@ -67,9 +67,16 @@ class QaViewModel extends ChangeNotifier {
     );
 
     try {
-      await launchUrl(emailLaunchUri, mode: LaunchMode.externalApplication);
+      bool opened = await launchUrl(
+      emailLaunchUri,
+      mode: LaunchMode.externalApplication,
+    );
+
+    if (!opened) {
+      throw Exception("No se pudo abrir la app de correo");
+    }
     } catch (e) {
-      print('Error crítico: No se pudo abrir el cliente de correo. $e');
+      debugPrint('Error crítico: No se pudo abrir el cliente de correo. $e');
     }
   }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'dart:async';
 import '../../models/album_model.dart';
 import 'detail_screen.dart';
 
@@ -33,7 +34,9 @@ class _ExploreViewState extends State<ExploreView> {
     try {
       final String encodedQuery = Uri.encodeComponent(query);
       final url = Uri.parse('http://ws.audioscrobbler.com/2.0/?method=album.search&album=$encodedQuery&api_key=$_lastFmApiKey&format=json&limit=15');
-      final response = await http.get(url);
+      final response = await http
+        .get(url)
+        .timeout(const Duration(seconds: 10));
 
       if (response.statusCode == 200) {
         final Map<String, dynamic> data = json.decode(response.body);
@@ -49,6 +52,13 @@ class _ExploreViewState extends State<ExploreView> {
           setState(() => _mensaje = "No se encontraron álbumes.");
         }
       }
+     else {
+        setState(() {
+            _mensaje = "Servidor no disponible.";
+        });
+      }
+    } on TimeoutException {
+      setState(() => _mensaje = "Tiempo de espera agotado.");
     } catch (e) {
       setState(() => _mensaje = "Fallo de conexión.");
     } finally {
@@ -134,7 +144,7 @@ class _ExploreViewState extends State<ExploreView> {
                   margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
                   child: ListTile(
                     leading: imageUrl.isNotEmpty 
-                        ? Image.network(imageUrl, width: 50, height: 50, fit: BoxFit.cover) 
+                        ? Image.network(imageUrl,width: 50,height: 50,fit: BoxFit.cover,errorBuilder: (_, __, ___) => const Icon(Icons.broken_image),)
                         : const Icon(Icons.album, color: Colors.grey, size: 50),
                     title: Text(albumName, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                     subtitle: Text(artistName, style: const TextStyle(color: Colors.grey)),

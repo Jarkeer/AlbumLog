@@ -16,6 +16,8 @@ import 'services/local_preferences_services.dart';
 import 'ui/screens/settings_screen.dart';
 import 'ui/screens/about_screen.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'l10n/app_localizations.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -52,9 +54,36 @@ class AlbumLogApp extends StatelessWidget {
         };
         return child!;
       },
+
       debugShowCheckedModeBanner: false,
       title: 'AlbumLog',
+
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+
+      supportedLocales: const [
+        Locale('es'),
+        Locale('en'),
+      ],
+
+      localeResolutionCallback: (locale, supportedLocales) {
+        if (locale == null) return const Locale('es');
+
+        for (final supportedLocale in supportedLocales) {
+          if (supportedLocale.languageCode == locale.languageCode) {
+            return supportedLocale;
+          }
+        }
+
+        return const Locale('es');
+      },
+
       themeMode: prefsVM.isDarkMode ? ThemeMode.dark : ThemeMode.light,
+
       darkTheme: ThemeData.dark().copyWith(
         primaryColor: Colors.deepPurple,
         scaffoldBackgroundColor: Colors.black,
@@ -65,6 +94,7 @@ class AlbumLogApp extends StatelessWidget {
           unselectedItemColor: Colors.grey,
         ),
       ),
+
       theme: ThemeData.light().copyWith(
         primaryColor: Colors.deepPurple,
         appBarTheme: const AppBarTheme(backgroundColor: Colors.deepPurple),
@@ -74,6 +104,7 @@ class AlbumLogApp extends StatelessWidget {
           unselectedItemColor: Colors.grey,
         ),
       ),
+
       home: const MainNavigationWrapper(),
     );
   }
@@ -99,6 +130,8 @@ class _MainNavigationWrapperState extends State<MainNavigationWrapper> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
       body: _screens[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
@@ -109,26 +142,26 @@ class _MainNavigationWrapperState extends State<MainNavigationWrapper> {
             _currentIndex = index;
           });
         },
-        items: const [
+        items: [
           BottomNavigationBarItem(
-            icon: Icon(Icons.search),
-            label: 'Explorar',
+            icon: const Icon(Icons.search),
+            label: l10n.explore,
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Perfil',
+            icon: const Icon(Icons.person),
+            label: l10n.profile,
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.verified_user_outlined), 
-            label: 'QA',
+            icon: const Icon(Icons.verified_user_outlined),
+            label: l10n.qa,
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: 'Ajustes',
+            icon: const Icon(Icons.settings),
+            label: l10n.settings,
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.info_outline),
-            label: 'Acerca',
+            icon: const Icon(Icons.info_outline),
+            label: l10n.about,
           ),
         ],
       ),

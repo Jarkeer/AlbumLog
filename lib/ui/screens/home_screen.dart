@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import '../../l10n/app_localizations.dart';
 
 class HomeView extends StatelessWidget {
   const HomeView({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       body: CustomScrollView(
         slivers: [
@@ -24,27 +26,26 @@ class HomeView extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Bienvenido a tu bitácora musical',
+                    l10n.homeWelcome,
                     style: Theme.of(context).textTheme.headlineSmall,
                   ),
                   const SizedBox(height: 10),
-                  const Text(
-                    'AlbumLog es el espacio donde tus discos favoritos cobran vida. '
-                    'Aquí no solo escuchas música, la vives, la reseñas y la compartes.',
+                  Text(
+                    l10n.homeDescription,
                     style: TextStyle(fontSize: 16, color: Colors.grey),
                   ),
                   const SizedBox(height: 30),
                   _buildFeatureCard(
                     context,
                     Icons.star_rate,
-                    'Reseñas Personalizadas',
-                    'Valora cada álbum de 1 a 5 estrellas y deja tu opinión.',
+                    l10n.personalReviews,
+                    l10n.personalReviewsDescription,
                   ),
                   _buildFeatureCard(
                     context,
                     Icons.people,
-                    'Comunidad',
-                    'Sigue a tus amigos y descubre qué están escuchando.',
+                      l10n.community,
+                      l10n.communityDescription,
                   ),
                 ],
               ),

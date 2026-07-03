@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'dart:async';
 import '../../models/album_model.dart';
 import 'detail_screen.dart';
+import '../../l10n/app_localizations.dart';
 
 class ExploreView extends StatefulWidget {
   const ExploreView({super.key});
@@ -19,15 +20,16 @@ class _ExploreViewState extends State<ExploreView> {
   
   bool _isLoading = false;
   List<dynamic> _albumList = [];
-  String _mensaje = "Busca tu álbum o artista favorito...";
+  String _mensaje = "";
 
   Future<void> _searchAlbums() async {
+    final l10n = AppLocalizations.of(context)!;
     final String query = _searchController.text.trim();
     if (query.isEmpty) return;
 
     setState(() {
       _isLoading = true;
-      _mensaje = "Buscando en la red...";
+      _mensaje = l10n.searching;
       _albumList = [];
     });
 
@@ -49,18 +51,18 @@ class _ExploreViewState extends State<ExploreView> {
             _mensaje = ""; // Limpiamos el mensaje si hay resultados
           });
         } else {
-          setState(() => _mensaje = "No se encontraron álbumes.");
+          setState(() => _mensaje = l10n.noAlbumsFound);
         }
       }
      else {
         setState(() {
-            _mensaje = "Servidor no disponible.";
+            _mensaje = l10n.serverUnavailable;
         });
       }
     } on TimeoutException {
-      setState(() => _mensaje = "Tiempo de espera agotado.");
+      setState(() => _mensaje = l10n.requestTimeout);
     } catch (e) {
-      setState(() => _mensaje = "Fallo de conexión.");
+      setState(() => _mensaje = l10n.connectionFailed);
     } finally {
       setState(() => _isLoading = false);
     }
@@ -85,8 +87,12 @@ class _ExploreViewState extends State<ExploreView> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    if (_mensaje.isEmpty && !_isLoading && _albumList.isEmpty) {
+      _mensaje = l10n.searchYourFavoriteAlbum;
+    }
     return Scaffold(
-      appBar: AppBar(title: const Text('Explorar Discos')),
+      appBar: AppBar(title: Text(l10n.exploreAlbums)),
       body: Column(
         children: [
           Padding(
@@ -95,7 +101,7 @@ class _ExploreViewState extends State<ExploreView> {
               controller: _searchController,
               style: const TextStyle(color: Colors.white),
               decoration: InputDecoration(
-                hintText: 'Buscar álbum o artista...',
+                hintText: l10n.searchAlbumArtist,
                 hintStyle: const TextStyle(color: Colors.grey),
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
                 enabledBorder: OutlineInputBorder(
@@ -134,8 +140,8 @@ class _ExploreViewState extends State<ExploreView> {
               itemCount: _albumList.length,
               itemBuilder: (context, index) {
                 final album = _albumList[index];
-                final String albumName = album['name'] ?? 'Desconocido';
-                final String artistName = album['artist'] ?? 'Artista desconocido';
+                final String albumName = album['name'] ?? l10n.unknown;
+                final String artistName = album['artist'] ?? l10n.unknownArtist;
                 final String imageUrl = _getImageUrl(album['image'], 'large');
                 final String imageExtraLargeUrl = _getImageUrl(album['image'], 'extralarge');
 
@@ -156,7 +162,7 @@ class _ExploreViewState extends State<ExploreView> {
                         title: albumName,
                         artist: artistName,
                         imagePath: imageExtraLargeUrl.isNotEmpty ? imageExtraLargeUrl : '', 
-                        description: 'Álbum obtenido desde la base de datos de Last.fm', 
+                        description: l10n.lastFmDescription,
                         );
 
                       // Navegamos al detalle original

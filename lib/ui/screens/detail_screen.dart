@@ -6,6 +6,8 @@ import '../../models/album_model.dart';
 import '../../models/review_model.dart'; 
 import '../../services/local_preferences_services.dart';
 import '../../viewsmodel/auth_viewmodel.dart';
+import '../../l10n/app_localizations.dart';
+
 class DetailScreen extends StatefulWidget {
   final AlbumModel album;
   
@@ -42,17 +44,20 @@ class _DetailScreenState extends State<DetailScreen> {
   }
 
   void _compartirAlbum() {
+  final l10n = AppLocalizations.of(context)!;
+
     Share.share(
-      '¡Mira este tremendo disco que encontré en AlbumLog! \n'
-      '${widget.album.title} de ${widget.album.artist}\n\n'
-      '¡Descarga la app y arma tu colección!'
+      '${l10n.shareMessage}\n'
+      '${widget.album.title} ${l10n.byArtist} ${widget.album.artist}\n\n'
+      '${l10n.downloadApp}',
     );
   }
 
  Future<void> _guardarCalificacion() async {
+  final l10n = AppLocalizations.of(context)!;
     if (_rating == 0) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Por favor, selecciona al menos 1 estrella')),
+        SnackBar(content: Text(l10n.selectAtLeastOneStar)),
       );
       return;
     }
@@ -82,8 +87,8 @@ class _DetailScreenState extends State<DetailScreen> {
       
       
       final mensaje = userId != null 
-          ? '¡Reseña guardada localmente y respaldada en la nube!'
-          : '¡Reseña guardada en tu colección local! (Inicia sesión para respaldar)';
+          ? l10n.reviewSavedCloud
+          : l10n.reviewSavedLocal;
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -94,7 +99,7 @@ class _DetailScreenState extends State<DetailScreen> {
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Error al guardar: $e'),
+          content: Text('${l10n.errorSaving} $e'),
           backgroundColor: Colors.red,
         ),
       );
@@ -107,13 +112,14 @@ class _DetailScreenState extends State<DetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.album.title),
         actions: [
           IconButton(
             icon: const Icon(Icons.share),
-            tooltip: 'Compartir álbum',
+            tooltip: l10n.shareAlbum,
             onPressed: _compartirAlbum,
           ),
         ],
@@ -158,8 +164,8 @@ class _DetailScreenState extends State<DetailScreen> {
                     ),
                     child: Column(
                       children: [
-                        const Text(
-                          '¿Qué te pareció este disco?',
+                        Text(
+                          l10n.whatDidYouThink,
                           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
                         ),
                         const SizedBox(height: 10),
@@ -191,7 +197,7 @@ class _DetailScreenState extends State<DetailScreen> {
                           maxLength: 300,
                           style: const TextStyle(color: Colors.white),
                           decoration: InputDecoration(
-                            labelText: 'Escribe tu reseña (opcional)',
+                            labelText: l10n.writeReview,
                             labelStyle: const TextStyle(color: Colors.grey),
                             alignLabelWithHint: true,
                             enabledBorder: OutlineInputBorder(
@@ -224,8 +230,8 @@ class _DetailScreenState extends State<DetailScreen> {
                                     width: 20,
                                     child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
                                   )
-                                : const Text(
-                                    'Publicar Reseña',
+                                : Text(
+                                    l10n.publishReview,
                                     style: TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.bold),
                                   ),
                           ),
@@ -235,8 +241,8 @@ class _DetailScreenState extends State<DetailScreen> {
                   ),
                   
                   const SizedBox(height: 32),
-                  const Text(
-                    'Discos Similares',
+                  Text(
+                    l10n.similarAlbums,
                     style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 16),

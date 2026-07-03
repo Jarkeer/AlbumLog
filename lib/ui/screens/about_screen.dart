@@ -1,40 +1,59 @@
 import 'package:flutter/material.dart';
+import '../../l10n/app_localizations.dart';
 
 class AboutScreen extends StatelessWidget {
   const AboutScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Acerca de AlbumLog'),
+        title: Text(l10n.aboutTitle),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24.0),
         child: Column(
           children: [
-            const Icon(Icons.album_rounded, size: 100, color: Colors.deepPurpleAccent),
+            const Icon(
+              Icons.album_rounded,
+              size: 100,
+              color: Colors.deepPurpleAccent,
+            ),
             const SizedBox(height: 20),
-            const Text(
-              'AlbumLog',
-              style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+
+            Text(
+              l10n.appTitle,
+              style: const TextStyle(
+                fontSize: 32,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-            const Text('Versión 1.0.0 (Beta Testing)', style: TextStyle(color: Colors.grey)),
+
+            Text(
+              l10n.version,
+              style: const TextStyle(color: Colors.grey),
+            ),
+
             const SizedBox(height: 30),
-            const Text(
-              'AlbumLog es el diario personal para los amantes de la música. '
-              'Nuestra misión es permitir que cada melómano pueda catalogar, '
-              'puntuar y compartir sus descubrimientos musicales de forma sencilla.\n\n'
-              ,
+
+            Text(
+              l10n.aboutDescription,
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 16, height: 1.5),
+              style: const TextStyle(
+                fontSize: 16,
+                height: 1.5,
+              ),
             ),
+
             const SizedBox(height: 40),
             const Divider(),
-            const ListTile(
-              leading: Icon(Icons.code),
-              title: Text('Desarrollado por'),
-              subtitle: Text('Javier Molina '),
+
+            ListTile(
+              leading: const Icon(Icons.code),
+              title: Text(l10n.developedBy),
+              subtitle: const Text('Javier Molina, Martin Alvarez'),
             ),
           ],
         ),

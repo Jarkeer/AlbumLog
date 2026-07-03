@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:album_log/main.dart'; 
+import '../../l10n/app_localizations.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -32,6 +33,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       // Usamos el color primario configurado en el ThemeData global
       backgroundColor: Theme.of(context).colorScheme.primary,
@@ -45,8 +47,8 @@ class _SplashScreenState extends State<SplashScreen> {
               height: 150,
             ),
             const SizedBox(height: 24),
-            const Text(
-              'AlbumLog',
+            Text(
+              l10n.appTitle,
               style: TextStyle(
                 fontSize: 36,
                 fontWeight: FontWeight.bold,

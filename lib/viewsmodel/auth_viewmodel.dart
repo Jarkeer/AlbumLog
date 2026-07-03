@@ -4,9 +4,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 
 class AuthViewModel extends ChangeNotifier {
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  
   final GoogleSignIn _googleSignIn = GoogleSignIn.instance;
-  
   bool _isGoogleInitialized = false;
 
   User? _user;
@@ -16,6 +14,8 @@ class AuthViewModel extends ChangeNotifier {
   bool get isLoading => _isLoading;
 
   AuthViewModel() {
+    _user = _auth.currentUser;
+
     _auth.authStateChanges().listen((User? newUser) {
       _user = newUser;
       notifyListeners();
@@ -27,10 +27,8 @@ class AuthViewModel extends ChangeNotifier {
       _isLoading = true;
       notifyListeners();
 
-      
       if (!_isGoogleInitialized) {
         await _googleSignIn.initialize(
-          
           serverClientId: '699008715686-fqtrugli1dpl5qoskjc66qlijbvv0te5.apps.googleusercontent.com',
           clientId: '699008715686-fqtrugli1dpl5qoskjc66qlijbvv0te5.apps.googleusercontent.com', 
         );

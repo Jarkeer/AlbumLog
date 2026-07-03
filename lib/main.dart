@@ -15,8 +15,8 @@ import 'services/local_preferences_services.dart';
 import 'ui/screens/settings_screen.dart';
 import 'ui/screens/about_screen.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 void main() async {
-  
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
 
@@ -28,12 +28,13 @@ void main() async {
       providers: [
         ChangeNotifierProvider(create: (_) => PreferencesViewModel()),
         ChangeNotifierProvider(create: (_) => QaViewModel()),
-        ChangeNotifierProvider(create: (_) => AuthViewModel()), 
+        ChangeNotifierProvider(create: (_) => AuthViewModel(), lazy: false), 
       ],
       child: const AlbumLogApp(), 
     ),
   );
 }
+
 class AlbumLogApp extends StatelessWidget {
   const AlbumLogApp({super.key});
 
@@ -98,7 +99,6 @@ class _MainNavigationWrapperState extends State<MainNavigationWrapper> {
             _currentIndex = index;
           });
         },
-        
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.search),
@@ -125,4 +125,3 @@ class _MainNavigationWrapperState extends State<MainNavigationWrapper> {
     );
   }
 }
-

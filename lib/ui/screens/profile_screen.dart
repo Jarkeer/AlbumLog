@@ -2,6 +2,7 @@ import 'package:album_log/viewsmodel/preferences_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../viewsmodel/auth_viewmodel.dart'; 
+import '../../l10n/app_localizations.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -31,9 +32,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     return Consumer2<PreferencesViewModel, AuthViewModel>(
       builder: (context, preferencesVM, authVM, child) {
+        final l10n = AppLocalizations.of(context)!;
         return Scaffold(
           appBar: AppBar(
-            title: const Text('Mi Perfil Musical'),
+            title: Text(l10n.myMusicProfile),
             actions: [
               IconButton(
                 icon: const Icon(Icons.refresh),
@@ -73,7 +75,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                          authVM.user!.displayName ?? 'Usuario de Google',
+                                          authVM.user!.displayName ?? l10n.googleUser,
                                           style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
                                         ),
                                         Text(
@@ -85,11 +87,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   ),
                                   IconButton(
                                     icon: const Icon(Icons.logout, color: Colors.redAccent),
-                                    tooltip: 'Cerrar Sesión',
+                                    tooltip: l10n.logout,
                                     onPressed: () async {
                                       await authVM.signOut();
                                       ScaffoldMessenger.of(context).showSnackBar(
-                                        const SnackBar(content: Text('Sesión cerrada correctamente')),
+                                        SnackBar(content: Text(l10n.logoutSuccess)),
                                       );
                                     },
                                   ),
@@ -97,13 +99,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               )
                             : Column(
                                 children: [
-                                  const Text(
-                                    'Sincroniza tu cuenta en la nube',
+                                  Text(
+                                    l10n.syncCloud,
                                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
                                   ),
                                   const SizedBox(height: 4),
-                                  const Text(
-                                    'Inicia sesión para respaldar tus reseñas y calificaciones.',
+                                  Text(
+                                    l10n.syncCloudDescription,
                                     textAlign: TextAlign.center,
                                     style: TextStyle(fontSize: 12, color: Colors.grey),
                                   ),
@@ -113,8 +115,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     height: 45,
                                     child: OutlinedButton.icon(
                                       icon: const Icon(Icons.login, color: Colors.white),
-                                      label: const Text(
-                                        'Iniciar Sesión con Google',
+                                      label: Text(
+                                        l10n.signInGoogle,
                                         style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                                       ),
                                       style: OutlinedButton.styleFrom(
@@ -129,14 +131,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                           if (authVM.user != null) {
                                             ScaffoldMessenger.of(context).showSnackBar(
                                               SnackBar(
-                                                content: Text('¡Bienvenido, ${authVM.user!.displayName}! 🎉'),
+                                                content: Text('${l10n.welcome} ${authVM.user!.displayName}! 🎉'),
                                                 backgroundColor: Colors.green,
                                               ),
                                             );
                                           }
                                         } catch (e) {
                                           ScaffoldMessenger.of(context).showSnackBar(
-                                            SnackBar(content: Text('Error de autenticación: $e')),
+                                            SnackBar(content: Text('${l10n.authenticationError} $e')),
                                           );
                                         }
                                       },
@@ -149,8 +151,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       const SizedBox(height: 24),
 
                     
-                      const Text(
-                        'Mi Cuenta y Preferencias',
+                      Text(
+                        l10n.accountPreferences,
                         style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.deepPurpleAccent),
                       ),
                       const SizedBox(height: 12),
@@ -158,8 +160,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       // Input de Nombre de Usuario
                       TextField(
                         controller: _nameController,
-                        decoration: const InputDecoration(
-                          labelText: 'Nombre de Usuario',
+                        decoration: InputDecoration(
+                          labelText: l10n.username,
                           border: OutlineInputBorder(),
                           prefixIcon: Icon(Icons.person),
                         ),
@@ -170,8 +172,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       // Selector de Género
                       DropdownButtonFormField<String>(
                         initialValue: _genres.contains(preferencesVM.favoriteGenre) ? preferencesVM.favoriteGenre : 'Todos',
-                        decoration: const InputDecoration(
-                          labelText: 'Género Musical Favorito',
+                        decoration: InputDecoration(
+                          labelText: l10n.favoriteGenre,
                           border: OutlineInputBorder(),
                           prefixIcon: Icon(Icons.music_note),
                         ),
@@ -194,12 +196,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       Row(
                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Text(
-                            'Mis Álbumes Calificados',
+                          Text(
+                            l10n.myRatedAlbums,
                             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.deepPurpleAccent),
                           ),
                           Chip(
-                            label: Text('${preferencesVM.savedReviews.length} discos'),
+                            label: Text('${preferencesVM.savedReviews.length} ${l10n.albums}'),
                             backgroundColor: Colors.deepPurple.withOpacity(0.2),
                           ),
                         ],
@@ -207,11 +209,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       const SizedBox(height: 12),
 
                       preferencesVM.savedReviews.isEmpty
-                          ? const Center(
+                          ? Center(
                               child: Padding(
                                 padding: EdgeInsets.symmetric(vertical: 30),
                                 child: Text(
-                                  'No tienes álbumes guardados en local.\n¡Califica discos en el buscador!',
+                                  l10n.noSavedAlbums,
                                   textAlign: TextAlign.center,
                                   style: TextStyle(color: Colors.grey),
                                 ),
@@ -269,7 +271,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       onPressed: () {
                                         preferencesVM.removeAlbum(review.albumId);
                                         ScaffoldMessenger.of(context).showSnackBar(
-                                          const SnackBar(content: Text('Registro eliminado de la memoria local')),
+                                          SnackBar(content: Text(l10n.localRecordDeleted)),
                                         );
                                       },
                                     ),

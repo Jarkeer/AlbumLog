@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../viewsmodel/qa_viewmodel.dart';
+import '../../l10n/app_localizations.dart';
 
 class QaScreen extends StatelessWidget {
   const QaScreen({super.key});
@@ -8,6 +9,7 @@ class QaScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final qaVM = Provider.of<QaViewModel>(context);
+    final l10n = AppLocalizations.of(context)!;
 
     if (qaVM.isLoading) {
       return const Scaffold(
@@ -19,14 +21,14 @@ class QaScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
-        title: const Text('Beta Testing QA'),
+        title: Text(l10n.qaTitle),
         backgroundColor: Colors.deepPurple,
       ),
       body: ListView(
         padding: const EdgeInsets.all(16.0),
         children: [
-          const Text(
-            'Por favor, califica los siguientes aspectos (0 a 5 estrellas):',
+          Text(
+            l10n.qaDescription,
             style: TextStyle(color: Colors.white, fontSize: 16),
           ),
           const SizedBox(height: 20),
@@ -67,7 +69,7 @@ class QaScreen extends StatelessWidget {
                                   divisions: 5,
                                   activeColor: Colors.deepPurple,
                                   inactiveColor: Colors.grey[700],
-                                  label: '${question.value.toInt()} estrellas',
+                                  label: '${question.value.toInt()} ${l10n.stars}',
                                   onChanged: (newValue) {
                                     qaVM.updateAnswer(categoryEntry.key, index, newValue);
                                   },
@@ -76,8 +78,8 @@ class QaScreen extends StatelessWidget {
                               const Icon(Icons.star, color: Colors.amber),
                             ],
                           ),
-                          Text("Min: ${question.min}", style: const TextStyle(color: Colors.grey, fontSize: 11)),
-                          Text("Max: ${question.max}", style: const TextStyle(color: Colors.grey, fontSize: 11)),
+                          Text("${l10n.minimum}: ${question.min}", style: const TextStyle(color: Colors.grey, fontSize: 11)),
+                          Text("${l10n.maximum}: ${question.max}", style: const TextStyle(color: Colors.grey, fontSize: 11)),
                         ],
                       ),
                     ),
@@ -92,7 +94,7 @@ class QaScreen extends StatelessWidget {
           ElevatedButton.icon(
             style: ElevatedButton.styleFrom(backgroundColor: Colors.deepPurple, padding: const EdgeInsets.symmetric(vertical: 16)),
             icon: const Icon(Icons.send, color: Colors.white),
-            label: const Text('ENVIAR RESULTADOS', style: TextStyle(color: Colors.white, fontSize: 16)),
+            label: Text(l10n.sendResults, style: TextStyle(color: Colors.white, fontSize: 16)),
             onPressed: () {
               qaVM.submitFeedback();
             },

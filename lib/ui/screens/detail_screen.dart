@@ -69,10 +69,11 @@ class _DetailScreenState extends State<DetailScreen> {
       
       // Instanciamos el modelo con los datos recolectados en la vista
       final newReview = ReviewModel(
-        albumId: widget.album.id,
-        albumTitle: widget.album.title,
-        rating: _rating,
-        reviewText: reviewText.isNotEmpty ? reviewText : null,
+          reviewId: DateTime.now().millisecondsSinceEpoch.toString(),
+          albumId: widget.album.id,
+          albumTitle: widget.album.title,
+          rating: _rating,
+          reviewText: reviewText.isNotEmpty ? reviewText : null,
       );
 
       

@@ -2,6 +2,7 @@ import 'package:album_log/viewsmodel/preferences_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../viewsmodel/auth_viewmodel.dart'; 
+import 'public_profile_screen.dart';
 import '../../l10n/app_localizations.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -85,15 +86,35 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       ],
                                     ),
                                   ),
-                                  IconButton(
-                                    icon: const Icon(Icons.logout, color: Colors.redAccent),
-                                    tooltip: l10n.logout,
-                                    onPressed: () async {
-                                      await authVM.signOut();
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                        SnackBar(content: Text(l10n.logoutSuccess)),
-                                      );
-                                    },
+                                  Column(
+                                    children: [
+                                      IconButton(
+                                        icon: const Icon(Icons.public, color: Colors.deepPurpleAccent),
+                                        tooltip: "Ver perfil público",
+                                        onPressed: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (_) => PublicProfileScreen(
+                                                uid: authVM.user!.uid,
+                                                displayName: authVM.user!.displayName ?? "Usuario",
+                                                photoURL: authVM.user!.photoURL ?? "",
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                      IconButton(
+                                        icon: const Icon(Icons.logout, color: Colors.redAccent),
+                                        tooltip: l10n.logout,
+                                        onPressed: () async {
+                                          await authVM.signOut();
+                                          ScaffoldMessenger.of(context).showSnackBar(
+                                            SnackBar(content: Text(l10n.logoutSuccess)),
+                                          );
+                                        },
+                                      ),
+                                    ],
                                   ),
                                 ],
                               )

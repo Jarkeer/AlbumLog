@@ -1,22 +1,23 @@
 import 'package:flutter/material.dart';
-import '../models/review_model.dart'; 
+import '../models/review_model.dart';
 import '../services/local_preferences_services.dart';
 import '../services/firebase_service.dart';
+
 class PreferencesViewModel extends ChangeNotifier {
   final LocalPreferencesService _service = LocalPreferencesService();
+  final FirebaseService _firebaseService = FirebaseService();
 
   bool _isLoading = false;
   String _username = '';
   bool _isDarkMode = true;
   String _favoriteGenre = 'Rock';
   List<ReviewModel> _savedReviews = [];
-  
+
   bool get isLoading => _isLoading;
   String get username => _username;
   bool get isDarkMode => _isDarkMode;
   String get favoriteGenre => _favoriteGenre;
   List<ReviewModel> get savedReviews => _savedReviews;
-  final FirebaseService _firebaseService = FirebaseService();
 
   PreferencesViewModel() {
     loadPreferences();
@@ -57,33 +58,44 @@ class PreferencesViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> saveReview(ReviewModel review, {String? userId}) async {
+  Future<void> saveReview(
+    ReviewModel review, {
+    String? userId,
+  }) async {
     try {
-      await _service.saveAlbumReview(review); 
+      // Siempre se guarda localmente
+      await _service.saveAlbumReview(review);
+
+      // Si el usuario inició sesión también se guarda en Firestore
       if (userId != null && userId.isNotEmpty) {
-        await _firebaseService.saveReviewToCloud(review, userId);
-        debugPrint('Reseña respaldada exitosamente en Firestore');
+        await _firebaseService.saveReviewToCloud(
+          review,
+          userId,
+        );
       }
 
-      await refreshAlbums(); 
+      await refreshAlbums();
     } catch (e) {
-      debugPrint('Error al guardar la reseña: $e');
-      rethrow; 
+      debugPrint("Error guardando reseña: $e");
+      rethrow;
     }
   }
 
-  Future<void> removeAlbum(String albumId) async {
-    await _service.deleteRating(albumId); 
+  Future<void> removeAlbum(
+    String albumId,
+  ) async {
+    await _service.deleteRating(albumId);
     await refreshAlbums();
   }
 
-  Future<void> refreshAlbums() async {
-    _isLoading = true;
-    notifyListeners();
-    
+  Future<void>refreshAlbums() async {
     _savedReviews = await _service.getAllSavedReviews();
-    
-    _isLoading = false;
     notifyListeners();
+  }
+
+  Future<List<ReviewModel>> getCloudReviews(
+    String userId,
+  ) async {
+    return await _firebaseService.getUserReviews(userId);
   }
 }

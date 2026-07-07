@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../../models/review_model.dart';
+import 'comments_screen.dart';
+
 class PublicProfileScreen extends StatelessWidget {
   final String uid;
   final String displayName;
@@ -17,85 +20,124 @@ class PublicProfileScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Perfil de $displayName'),
+        title: Text("Perfil de $displayName"),
       ),
       body: FutureBuilder<DocumentSnapshot>(
-        // Consultamos los detalles extendidos del usuario
-        future: FirebaseFirestore.instance.collection('users').doc(uid).get(),
+        future: FirebaseFirestore.instance
+            .collection('users')
+            .doc(uid)
+            .get(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator(color: Colors.deepPurpleAccent));
+            return const Center(
+              child: CircularProgressIndicator(
+                color: Colors.deepPurpleAccent,
+              ),
+            );
           }
 
           if (!snapshot.hasData || !snapshot.data!.exists) {
-            return const Center(child: Text('Error al cargar la información del perfil'));
+            return const Center(
+              child: Text(
+                "No se pudo cargar el perfil.",
+              ),
+            );
           }
 
           final data = snapshot.data!.data() as Map<String, dynamic>;
-          final favoriteGenre = data['favoriteGenre'] ?? 'No especificado';
+
+          final favoriteGenre =
+              data['favoriteGenre'] ?? "No especificado";
 
           return SingleChildScrollView(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Cabecera del perfil
+
                 Container(
                   width: double.infinity,
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
-                    color: Colors.grey[900],
+                    color: Colors.grey.shade900,
                     borderRadius: BorderRadius.circular(15),
                   ),
                   child: Column(
                     children: [
+
                       CircleAvatar(
                         radius: 45,
                         backgroundImage: photoURL.isNotEmpty
                             ? NetworkImage(photoURL)
-                            : const AssetImage('assets/images/default_avatar.png') as ImageProvider,
+                            : const AssetImage(
+                                    "assets/images/default_avatar.png")
+                                as ImageProvider,
                       ),
-                      const SizedBox(height: 16),
+
+                      const SizedBox(height: 15),
+
                       Text(
                         displayName,
-                        style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white),
+                        style: const TextStyle(
+                          fontSize: 22,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                      const SizedBox(height: 8),
+
+                      const SizedBox(height: 10),
+
                       Chip(
-                        label: Text('Género Favorito: $favoriteGenre'),
-                        backgroundColor: Colors.deepPurple.withOpacity(0.3),
-                        labelStyle: const TextStyle(color: Colors.white),
+                        backgroundColor:
+                            Colors.deepPurple.withOpacity(.3),
+                        label: Text(
+                          "Género favorito: $favoriteGenre",
+                          style:
+                              const TextStyle(color: Colors.white),
+                        ),
                       ),
                     ],
                   ),
                 ),
-                const SizedBox(height: 24),
-                
-                const Text(
-                  'Su Actividad Musical',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.deepPurpleAccent),
-                ),
-                const SizedBox(height: 12),
 
-                
+                const SizedBox(height: 25),
+
+                const Text(
+                  "Reseñas",
+                  style: TextStyle(
+                    fontSize: 22,
+                    color: Colors.deepPurpleAccent,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+
+                const SizedBox(height: 15),
+
                 StreamBuilder<QuerySnapshot>(
                   stream: FirebaseFirestore.instance
                       .collection('users')
                       .doc(uid)
-                      .collection('reviews') 
+                      .collection('reviews')
+                      .orderBy(
+                        "createdAt",
+                        descending: true,
+                      )
                       .snapshots(),
                   builder: (context, reviewSnapshot) {
-                    if (reviewSnapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(child: CircularProgressIndicator());
+                    if (reviewSnapshot.connectionState ==
+                        ConnectionState.waiting) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
                     }
 
-                    if (!reviewSnapshot.hasData || reviewSnapshot.data!.docs.isEmpty) {
+                    if (!reviewSnapshot.hasData ||
+                        reviewSnapshot.data!.docs.isEmpty) {
                       return const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 20),
+                        padding: EdgeInsets.all(30),
                         child: Center(
                           child: Text(
-                            'Este usuario aún no ha compartido reseñas.',
-                            style: TextStyle(color: Colors.grey),
+                            "Este usuario todavía no ha publicado reseñas.",
                           ),
                         ),
                       );
@@ -105,16 +147,78 @@ class PublicProfileScreen extends StatelessWidget {
 
                     return ListView.builder(
                       shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
+                      physics:
+                          const NeverScrollableScrollPhysics(),
                       itemCount: reviews.length,
-                      itemBuilder: (context, revIndex) {
-                        final review = reviews[revIndex].data() as Map<String, dynamic>;
+                      itemBuilder: (context, index) {
+                        final review =
+                            ReviewModel.fromMap(reviews[index].data()
+                                as Map<String, dynamic>);
+
                         return Card(
-                          margin: const EdgeInsets.symmetric(vertical: 6),
-                          child: ListTile(
-                            leading: const Icon(Icons.album, color: Colors.deepPurple),
-                            title: Text(review['albumTitle'] ?? 'Álbum Desconocido'),
-                            subtitle: Text('Nota: ${review['rating']}/5\n"${review['reviewText'] ?? ''}"'),
+                          margin: const EdgeInsets.only(bottom: 15),
+                          child: Padding(
+                            padding: const EdgeInsets.all(15),
+                            child: Column(
+                              crossAxisAlignment:
+                                  CrossAxisAlignment.start,
+                              children: [
+
+                                Text(
+                                  review.albumTitle,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 18,
+                                  ),
+                                ),
+
+                                const SizedBox(height: 8),
+
+                                Row(
+                                  children: List.generate(
+                                    5,
+                                    (star) => Icon(
+                                      star < review.rating
+                                          ? Icons.star
+                                          : Icons.star_border,
+                                      color: Colors.amber,
+                                      size: 20,
+                                    ),
+                                  ),
+                                ),
+
+                                const SizedBox(height: 10),
+
+                                Text(
+                                  review.reviewText ??
+                                      "Sin comentario.",
+                                ),
+
+                                const SizedBox(height: 15),
+
+                                SizedBox(
+                                  width: double.infinity,
+                                  child: ElevatedButton.icon(
+                                    icon: const Icon(Icons.comment),
+                                    label: const Text(
+                                      "Ver comentarios",
+                                    ),
+                                    onPressed: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (_) =>
+                                              CommentsScreen(
+                                            ownerId: uid,
+                                            review: review,
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         );
                       },

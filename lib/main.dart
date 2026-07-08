@@ -8,7 +8,8 @@ import 'package:share_plus/share_plus.dart';
 import 'ui/screens/explore_screen.dart';
 import 'viewsmodel/preferences_viewmodel.dart';
 import 'viewsmodel/qa_viewmodel.dart';
-import 'ui/screens/qa_screen.dart';
+// IMPORT CAMBIADO: Ahora importamos la pantalla de búsqueda en lugar de QA
+import 'ui/screens/user_search_screen.dart'; 
 import 'viewsmodel/auth_viewmodel.dart';
 import 'ui/screens/profile_screen.dart';
 import 'firebase_options.dart';
@@ -31,7 +32,6 @@ void main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => PreferencesViewModel()),
-        ChangeNotifierProvider(create: (_) => QaViewModel()),
         ChangeNotifierProvider(create: (_) => AuthViewModel(), lazy: false), 
       ],
       child: const AlbumLogApp(), 
@@ -125,7 +125,7 @@ class _MainNavigationWrapperState extends State<MainNavigationWrapper> {
   final List<Widget> _screens = [
     const ExploreView(),   
     const ProfileScreen(), 
-    const QaScreen(),      
+    const UserSearchScreen(), 
     const SettingsScreen(),
     const AboutScreen(),
   ];
@@ -154,8 +154,8 @@ class _MainNavigationWrapperState extends State<MainNavigationWrapper> {
             label: l10n.profile,
           ),
           BottomNavigationBarItem(
-            icon: const Icon(Icons.verified_user_outlined),
-            label: l10n.qa,
+            icon: const Icon(Icons.people), 
+            label: 'Comunidad', // Texto temporal hasta que agregues una variable como l10n.community a tus archivos de idioma
           ),
           BottomNavigationBarItem(
             icon: const Icon(Icons.settings),

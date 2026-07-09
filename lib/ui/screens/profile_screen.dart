@@ -242,13 +242,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                       const SizedBox(height: 12),
 
-                      StreamBuilder<QuerySnapshot>(
-                        stream: FirebaseFirestore.instance
-                            .collection('users')
-                            .doc(authVM.user!.uid)
-                            .collection('reviews')
-                            .snapshots(),
-                        builder: (context, reviewSnapshot) {
+                        authVM.user == null
+                            ? Center(
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(vertical: 40),
+                                  child: Text(
+                                    l10n.signInGoogle,
+                                    style: const TextStyle(
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                ),
+                              )
+                            : StreamBuilder<QuerySnapshot>(
+                                stream: FirebaseFirestore.instance
+                                    .collection('users')
+                                    .doc(authVM.user!.uid)
+                                    .collection('reviews')
+                                    .snapshots(),
+                                builder: (context, reviewSnapshot) {
                           if (reviewSnapshot.connectionState == ConnectionState.waiting) {
                             return const Center(
                               child: CircularProgressIndicator(),

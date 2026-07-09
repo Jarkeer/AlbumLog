@@ -4,6 +4,8 @@ import 'package:provider/provider.dart';
 import '../../viewsmodel/auth_viewmodel.dart'; 
 import 'public_profile_screen.dart';
 import '../../l10n/app_localizations.dart';
+import '../../services/comment_service.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -15,6 +17,7 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   final TextEditingController _nameController = TextEditingController();
   final List<String> _genres = ['Rock', 'Pop', 'Metal', 'Jazz', 'Electrónica', 'Hip-Hop', 'Todos'];
+  final CommentService _commentService = CommentService();
 
   @override
   void initState() {
@@ -229,77 +232,151 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                       const SizedBox(height: 12),
 
-                      preferencesVM.savedReviews.isEmpty
-                          ? Center(
+                      StreamBuilder<QuerySnapshot>(
+                        stream: FirebaseFirestore.instance
+                            .collection('users')
+                            .doc(authVM.user!.uid)
+                            .collection('reviews')
+                            .snapshots(),
+                        builder: (context, reviewSnapshot) {
+                          if (reviewSnapshot.connectionState == ConnectionState.waiting) {
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          }
+
+                          if (!reviewSnapshot.hasData || reviewSnapshot.data!.docs.isEmpty) {
+                            return Center(
                               child: Padding(
-                                padding: EdgeInsets.symmetric(vertical: 30),
+                                padding: const EdgeInsets.symmetric(vertical: 30),
                                 child: Text(
                                   l10n.noSavedAlbums,
                                   textAlign: TextAlign.center,
-                                  style: TextStyle(color: Colors.grey),
+                                  style: const TextStyle(color: Colors.grey),
                                 ),
                               ),
-                            )
-                          : ListView.builder(
-                              shrinkWrap: true,
-                              physics: const NeverScrollableScrollPhysics(),
-                              itemCount: preferencesVM.savedReviews.length,
-                              itemBuilder: (context, index) {
-                                // Obtenemos el modelo completo
-                                final review = preferencesVM.savedReviews[index];
+                            );
+                          }
 
-                                return Card(
-                                  margin: const EdgeInsets.symmetric(vertical: 6),
-                                  child: ListTile(
-                                    leading: const CircleAvatar(
-                                      backgroundColor: Colors.deepPurple,
-                                      child: Icon(Icons.album, color: Colors.white),
-                                    ),
-                                    // Usamos el título que viene en el modelo
-                                    title: Text(
-                                      review.albumTitle,
-                                      style: const TextStyle(fontWeight: FontWeight.bold),
-                                    ),
-                                    subtitle: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        const SizedBox(height: 4),
-                                        // Estrellas
-                                        Row(
-                                          children: List.generate(5, (starIndex) {
-                                            return Icon(
-                                              starIndex < review.rating ? Icons.star : Icons.star_border,
-                                              color: Colors.amber,
-                                              size: 18,
-                                            );
-                                          }),
-                                        ),
-                                        // Texto de la reseña (condicional)
-                                        if (review.reviewText != null && review.reviewText!.isNotEmpty) ...[
-                                          const SizedBox(height: 8),
-                                          Text(
-                                            '"${review.reviewText}"',
-                                            style: const TextStyle(
-                                              fontStyle: FontStyle.italic,
-                                              color: Colors.grey,
-                                            ),
-                                          ),
-                                        ]
-                                      ],
-                                    ),
-                                    trailing: IconButton(
-                                      icon: const Icon(Icons.delete_outline, color: Colors.redAccent),
-                                      onPressed: () {
-                                        preferencesVM.removeAlbum(review.albumId);
-                                        ScaffoldMessenger.of(context).showSnackBar(
-                                          SnackBar(content: Text(l10n.localRecordDeleted)),
-                                        );
-                                      },
-                                    ),
+                          final reviews = reviewSnapshot.data!.docs;
+
+                          return ListView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: reviews.length,
+                            itemBuilder: (context, index) {
+                              final reviewDoc = reviews[index];
+                              final reviewId = reviewDoc.id;
+                              final review = reviewDoc.data() as Map<String, dynamic>;
+
+                              return Card(
+                                margin: const EdgeInsets.symmetric(vertical: 6),
+                                child: ListTile(
+                                  leading: const CircleAvatar(
+                                    backgroundColor: Colors.deepPurple,
+                                    child: Icon(Icons.album, color: Colors.white),
                                   ),
-                                );
-                              },
-                            ),
+                                  title: Text(
+                                    review['albumTitle'] ?? '',
+                                    style: const TextStyle(fontWeight: FontWeight.bold),
+                                  ),
+                                  subtitle: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      const SizedBox(height: 4),
+
+                                      Row(
+                                        children: List.generate(5, (i) {
+                                          final rating = review['rating'] ?? 0;
+                                          return Icon(
+                                            i < rating ? Icons.star : Icons.star_border,
+                                            color: Colors.amber,
+                                            size: 18,
+                                          );
+                                        }),
+                                      ),
+
+                                      if ((review['reviewText'] ?? '').toString().isNotEmpty) ...[
+                                        const SizedBox(height: 8),
+                                        Text(
+                                          '"${review['reviewText']}"',
+                                          style: const TextStyle(
+                                            fontStyle: FontStyle.italic,
+                                            color: Colors.grey,
+                                          ),
+                                        ),
+                                      ],
+
+                                      const SizedBox(height: 12),
+                                      const Divider(),
+
+                                      const Text(
+                                        "Comentarios",
+                                        style: TextStyle(fontWeight: FontWeight.bold),
+                                      ),
+
+                                      StreamBuilder<QuerySnapshot>(
+                                        stream: _commentService.getComments(
+                                          authVM.user!.uid,
+                                          reviewId,
+                                        ),
+                                        builder: (context, snapshot) {
+                                          if (!snapshot.hasData) {
+                                            return const SizedBox();
+                                          }
+
+                                          final comments = snapshot.data!.docs;
+
+                                          if (comments.isEmpty) {
+                                            return const Padding(
+                                              padding: EdgeInsets.symmetric(vertical: 8),
+                                              child: Text(
+                                                "Aún no hay comentarios.",
+                                                style: TextStyle(color: Colors.grey),
+                                              ),
+                                            );
+                                          }
+
+                                          return ListView.builder(
+                                            shrinkWrap: true,
+                                            physics: const NeverScrollableScrollPhysics(),
+                                            itemCount: comments.length,
+                                            itemBuilder: (context, i) {
+                                              final comment =
+                                                  comments[i].data() as Map<String, dynamic>;
+
+                                              return ListTile(
+                                                dense: true,
+                                                leading: const Icon(Icons.person, size: 20),
+                                                title: Text(comment['senderName'] ?? ''),
+                                                subtitle: Text(comment['text'] ?? ''),
+                                              );
+                                            },
+                                          );
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                  trailing: IconButton(
+                                    icon: const Icon(
+                                      Icons.delete_outline,
+                                      color: Colors.redAccent,
+                                    ),
+                                    onPressed: () {
+                                      FirebaseFirestore.instance
+                                          .collection('users')
+                                          .doc(authVM.user!.uid)
+                                          .collection('reviews')
+                                          .doc(reviewId)
+                                          .delete();
+                                    },
+                                  ),
+                                ),
+                              );
+                            },
+                          );
+                        },
+                      ),
                     ],
                   ),
                 ),

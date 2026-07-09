@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'public_profile_screen.dart'; 
+import '../../l10n/app_localizations.dart';
 
 class UserSearchScreen extends StatefulWidget {
   const UserSearchScreen({super.key});
@@ -21,13 +22,14 @@ class _UserSearchScreenState extends State<UserSearchScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
         title: TextField(
           controller: _searchController,
           style: const TextStyle(color: Colors.white),
           decoration: InputDecoration(
-            hintText: 'Buscar melómanos...',
+            hintText: l10n.userSearchHint,
             hintStyle: TextStyle(color: Colors.white.withOpacity(0.6)),
             border: InputBorder.none,
             suffixIcon: _searchQuery.isNotEmpty
@@ -50,12 +52,12 @@ class _UserSearchScreenState extends State<UserSearchScreen> {
         ),
       ),
       body: _searchQuery.isEmpty
-          ? const Center(
-              child: Text(
-                'Escribe el nombre de un usuario para buscar',
-                style: TextStyle(color: Colors.grey),
-              ),
-            )
+          ? Center(
+                child: Text(
+                  l10n.searchUserMessage,
+                  style: const TextStyle(color: Colors.grey),
+                ),
+              )
           : StreamBuilder<QuerySnapshot>(
               stream: FirebaseFirestore.instance
                   .collection('users')
@@ -68,8 +70,11 @@ class _UserSearchScreenState extends State<UserSearchScreen> {
                 }
 
                 if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                  return const Center(
-                    child: Text('No se encontraron usuarios', style: TextStyle(color: Colors.grey)),
+                  return Center(
+                    child: Text(
+                      l10n.noUsersFound,
+                      style: const TextStyle(color: Colors.grey),
+                    ),
                   );
                 }
 
@@ -87,10 +92,12 @@ class _UserSearchScreenState extends State<UserSearchScreen> {
                             : const AssetImage('assets/images/default_avatar.png') as ImageProvider,
                       ),
                       title: Text(
-                        userData['displayName'] ?? 'Usuario',
+                        userData['displayName'] ?? l10n.user,
                         style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
-                      subtitle: Text(userData['favoriteGenre'] ?? 'Sin género favorito'),
+                      subtitle: Text(
+                        userData['favoriteGenre'] ?? l10n.noFavoriteGenre,
+                      ),
                       trailing: const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
                       onTap: () {
                         // Navegar al perfil público del usuario seleccionado

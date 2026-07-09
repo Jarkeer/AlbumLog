@@ -15,17 +15,17 @@
   "developedBy": "Developed by",
 
   "shareAlbum": "Share album",
-  "selectAtLeastOneStar": "Please select at least one star",
+  "selectAtLeastOneStar": "Please select at least 1 star",
   "reviewSavedCloud": "Review saved locally and backed up to the cloud!",
-  "reviewSavedLocal": "Review saved locally! (Sign in to back it up)",
-  "errorSaving": "Error saving:",
-  "whatDidYouThink": "What did you think of this album?",
+  "reviewSavedLocal": "Review saved to your local collection! (Sign in to back it up)",
+  "errorSaving": "Error while saving:",
+  "whatDidYouThink": "What did you think about this album?",
   "writeReview": "Write your review (optional)",
   "publishReview": "Publish review",
   "similarAlbums": "Similar albums",
-  "shareMessage": "Check out this awesome album I found on AlbumLog!",
+  "shareMessage": "Check out this amazing album I found on AlbumLog!",
   "byArtist": "by",
-  "downloadApp": "Download the app and start your collection!",
+  "downloadApp": "Download the app and build your collection!",
 
   "exploreAlbums": "Explore Albums",
   "searchAlbumArtist": "Search album or artist...",
@@ -37,19 +37,19 @@
   "connectionFailed": "Connection failed.",
   "unknown": "Unknown",
   "unknownArtist": "Unknown artist",
-  "lastFmDescription": "Album retrieved from Last.fm database",
+  "lastFmDescription": "Album obtained from the Last.fm database",
 
   "homeWelcome": "Welcome to your music journal",
-  "homeDescription": "AlbumLog is the place where your favorite albums come to life. Here you don't just listen to music, you experience it, review it, and share it.",
+  "homeDescription": "AlbumLog is the place where your favorite albums come to life. Here you don't just listen to music—you experience it, review it, and share it.",
   "personalReviews": "Personal Reviews",
-  "personalReviewsDescription": "Rate every album from 1 to 5 stars and leave your opinion.",
+  "personalReviewsDescription": "Rate each album from 1 to 5 stars and leave your opinion.",
   "community": "Community",
   "communityDescription": "Follow your friends and discover what they're listening to.",
 
   "myMusicProfile": "My Music Profile",
   "googleUser": "Google User",
   "logout": "Sign out",
-  "logoutSuccess": "Successfully signed out",
+  "logoutSuccess": "Signed out successfully",
   "syncCloud": "Sync your account to the cloud",
   "syncCloudDescription": "Sign in to back up your reviews and ratings.",
   "signInGoogle": "Sign in with Google",
@@ -61,10 +61,10 @@
   "favoriteGenre": "Favorite Music Genre",
   "myRatedAlbums": "My Rated Albums",
   "albums": "albums",
-  "noSavedAlbums": "You don't have any locally saved albums.\nRate albums from the search screen!",
+  "noSavedAlbums": "You don't have any albums saved locally.\nRate albums from the search screen!",
   "localRecordDeleted": "Record deleted from local storage",
 
-  "qaTitle": "QA Beta Testing",
+  "qaTitle": "Beta Testing QA",
   "qaDescription": "Please rate the following aspects (0 to 5 stars):",
   "stars": "stars",
   "minimum": "Min",
@@ -72,10 +72,65 @@
   "sendResults": "SUBMIT RESULTS",
 
   "settingsTitle": "Settings",
-  "visualAspect": "Visual Appearance",
+  "visualAspect": "Appearance",
   "darkMode": "Dark Mode",
-  "changeTheme": "Change the entire app theme",
+  "changeTheme": "Change the theme for the entire application",
   "account": "Account",
   "language": "Language",
-  "spanishChile": "Spanish (Chile)"
+  "spanishChile": "Spanish (Chile)",
+
+  "userDefaultName": "AlbumLog User",
+
+  "comments": "Comments",
+  "loginToComment": "You must sign in to comment.",
+  "user": "User",
+  "noComment": "No comment",
+  "beFirstComment": "Be the first to comment.",
+  "writeComment": "Write a comment...",
+  "error": "Error",
+
+  "viewPublicProfile": "View Public Profile",
+  "allGenres": "All",
+  "rock": "Rock",
+  "pop": "Pop",
+  "metal": "Metal",
+  "jazz": "Jazz",
+  "electronic": "Electronic",
+  "hipHop": "Hip-Hop",
+  "noCommentsYet": "There are no comments yet.",
+
+  "profileOf": "Profile of {name}",
+  "@profileOf": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+
+  "errorLoadingProfile": "Error loading profile information",
+
+  "favoriteGenreLabel": "Favorite Genre: {genre}",
+  "@favoriteGenreLabel": {
+    "placeholders": {
+      "genre": {}
+    }
+  },
+
+  "notSpecified": "Not specified",
+
+  "sendFriendRequest": "Send Friend Request",
+  "friendsRemove": "Friends (Remove)",
+  "pendingRequestCancel": "Pending Request (Cancel)",
+  "accept": "Accept",
+  "reject": "Reject",
+
+  "musicActivity": "Music Activity",
+  "userNoReviews": "This user hasn't shared any reviews yet.",
+
+  "album": "Album",
+  "ratingLabel": "Rating",
+
+  "userSearchHint": "Search music lovers...",
+  "searchUserMessage": "Type a username to search",
+  "noUsersFound": "No users found",
+  "noFavoriteGenre": "No favorite genre"
 }

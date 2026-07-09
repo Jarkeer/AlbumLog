@@ -77,5 +77,60 @@
   "changeTheme": "Cambia el tema de toda la aplicación",
   "account": "Cuenta",
   "language": "Idioma",
-  "spanishChile": "Español (Chile)"
+  "spanishChile": "Español (Chile)",
+
+  "userDefaultName": "Usuario de AlbumLog",
+
+  "comments": "Comentarios",
+  "loginToComment": "Debes iniciar sesión para comentar.",
+  "user": "Usuario",
+  "noComment": "Sin comentario",
+  "beFirstComment": "Sé el primero en comentar.",
+  "writeComment": "Escribe un comentario...",
+  "error": "Error",
+
+  "viewPublicProfile": "Ver perfil público",
+  "allGenres": "Todos",
+  "rock": "Rock",
+  "pop": "Pop",
+  "metal": "Metal",
+  "jazz": "Jazz",
+  "electronic": "Electrónica",
+  "hipHop": "Hip-Hop",
+  "noCommentsYet": "Aún no hay comentarios.",
+
+  "profileOf": "Perfil de {name}",
+  "@profileOf": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+
+  "errorLoadingProfile": "Error al cargar la información del perfil",
+
+  "favoriteGenreLabel": "Género Favorito: {genre}",
+  "@favoriteGenreLabel": {
+    "placeholders": {
+      "genre": {}
+    }
+  },
+
+  "notSpecified": "No especificado",
+
+  "sendFriendRequest": "Enviar solicitud",
+  "friendsRemove": "Amigos (Eliminar)",
+  "pendingRequestCancel": "Solicitud pendiente (Cancelar)",
+  "accept": "Aceptar",
+  "reject": "Rechazar",
+
+  "musicActivity": "Su actividad musical",
+  "userNoReviews": "Este usuario aún no ha compartido reseñas.",
+
+  "album": "Álbum",
+  "ratingLabel": "Nota",
+
+  "userSearchHint": "Buscar melómanos...",
+  "searchUserMessage": "Escribe el nombre de un usuario para buscar",
+  "noUsersFound": "No se encontraron usuarios",
+  "noFavoriteGenre": "Sin género favorito"
 }

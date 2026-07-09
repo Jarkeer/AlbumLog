@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../viewsmodel/auth_viewmodel.dart';
 import '../../services/friendship_service.dart';
 import '../../services/comment_service.dart';
+import '../../l10n/app_localizations.dart';
 
 class PublicProfileScreen extends StatefulWidget {
   final String uid;
@@ -39,10 +40,10 @@ class _PublicProfileScreenState extends State<PublicProfileScreen> {
     // Obtenemos al usuario autenticado actual para la lógica de amistad
     final authVM = Provider.of<AuthViewModel>(context, listen: false);
     final currentUser = authVM.user;
-
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
-        title: Text('Perfil de ${widget.displayName}'),
+        title: Text(l10n.profileOf(widget.displayName)),
       ),
       body: FutureBuilder<DocumentSnapshot>(
         // Consultamos los detalles extendidos del usuario
@@ -53,11 +54,14 @@ class _PublicProfileScreenState extends State<PublicProfileScreen> {
           }
 
           if (!snapshot.hasData || !snapshot.data!.exists) {
-            return const Center(child: Text('Error al cargar la información del perfil'));
+            return Center(
+              child: Text(l10n.errorLoadingProfile),
+            );
           }
 
           final data = snapshot.data!.data() as Map<String, dynamic>;
-          final favoriteGenre = data['favoriteGenre'] ?? 'No especificado';
+          final favoriteGenre =
+            data['favoriteGenre'] ?? l10n.notSpecified;
 
           return SingleChildScrollView(
             padding: const EdgeInsets.all(16.0),
@@ -87,7 +91,9 @@ class _PublicProfileScreenState extends State<PublicProfileScreen> {
                       ),
                       const SizedBox(height: 8),
                       Chip(
-                        label: Text('Género Favorito: $favoriteGenre'),
+                        label: Text(
+                          l10n.favoriteGenreLabel(favoriteGenre),
+                        ),
                         backgroundColor: Colors.deepPurple.withOpacity(0.3),
                         labelStyle: const TextStyle(color: Colors.white),
                       ),
@@ -102,7 +108,7 @@ class _PublicProfileScreenState extends State<PublicProfileScreen> {
                               // Caso 1: No hay ninguna relación
                               return ElevatedButton.icon(
                                 icon: const Icon(Icons.person_add),
-                                label: const Text('Enviar Solicitud'),
+                                label: Text(l10n.sendFriendRequest),
                                 style: ElevatedButton.styleFrom(backgroundColor: Colors.deepPurple),
                                 onPressed: () => _friendshipService.sendFriendRequest(
                                   senderId: currentUser.uid,
@@ -119,7 +125,10 @@ class _PublicProfileScreenState extends State<PublicProfileScreen> {
                               // Caso 2: Ya son amigos
                               return OutlinedButton.icon(
                                 icon: const Icon(Icons.people, color: Colors.green),
-                                label: const Text('Amigos (Eliminar)', style: TextStyle(color: Colors.redAccent)),
+                                label: Text(
+                                  l10n.friendsRemove,
+                                  style: const TextStyle(color: Colors.redAccent),
+                                ),
                                 style: OutlinedButton.styleFrom(side: const BorderSide(color: Colors.green)),
                                 onPressed: () => _friendshipService.deleteFriendship(
                                   senderId: currentUser.uid,
@@ -130,7 +139,10 @@ class _PublicProfileScreenState extends State<PublicProfileScreen> {
                               // Caso 3: Solicitud enviada por mí, esperando respuesta
                               return ElevatedButton.icon(
                                 icon: const Icon(Icons.hourglass_top, color: Colors.white),
-                                label: const Text('Solicitud Pendiente (Cancelar)', style: TextStyle(color: Colors.white)),
+                                label: Text(
+                                    l10n.pendingRequestCancel,
+                                    style: const TextStyle(color: Colors.white),
+                                  ),
                                 style: ElevatedButton.styleFrom(backgroundColor: Colors.grey[700]),
                                 onPressed: () => _friendshipService.deleteFriendship(
                                   senderId: currentUser.uid,
@@ -144,7 +156,10 @@ class _PublicProfileScreenState extends State<PublicProfileScreen> {
                                 children: [
                                   ElevatedButton.icon(
                                     icon: const Icon(Icons.check, color: Colors.white),
-                                    label: const Text('Aceptar', style: TextStyle(color: Colors.white)),
+                                    label: Text(
+                                      l10n.accept,
+                                      style: const TextStyle(color: Colors.white),
+                                    ),
                                     style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
                                     onPressed: () => _friendshipService.acceptFriendRequest(
                                       senderId: widget.uid,
@@ -158,7 +173,10 @@ class _PublicProfileScreenState extends State<PublicProfileScreen> {
                                       senderId: widget.uid,
                                       receiverId: currentUser.uid,
                                     ),
-                                    child: const Text('Rechazar', style: TextStyle(color: Colors.redAccent)),
+                                    child: Text(
+                                      l10n.reject,
+                                      style: const TextStyle(color: Colors.redAccent),
+                                    ),
                                   ),
                                 ],
                               );
@@ -171,9 +189,13 @@ class _PublicProfileScreenState extends State<PublicProfileScreen> {
                 ),
                 const SizedBox(height: 24),
                 
-                const Text(
-                  'Su Actividad Musical',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.deepPurpleAccent),
+                Text(
+                  l10n.musicActivity,
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.deepPurpleAccent,
+                  ),
                 ),
                 const SizedBox(height: 12),
 
@@ -190,13 +212,13 @@ class _PublicProfileScreenState extends State<PublicProfileScreen> {
                     }
 
                     if (!reviewSnapshot.hasData || reviewSnapshot.data!.docs.isEmpty) {
-                      return const Padding(
+                      return Padding(
                         padding: EdgeInsets.symmetric(vertical: 20),
                         child: Center(
-                          child: Text(
-                            'Este usuario aún no ha compartido reseñas.',
-                            style: TextStyle(color: Colors.grey),
-                          ),
+                        child: Text(
+                          l10n.userNoReviews,
+                          style: const TextStyle(color: Colors.grey),
+                        ),
                         ),
                       );
                     }
@@ -230,17 +252,17 @@ class _PublicProfileScreenState extends State<PublicProfileScreen> {
                                     Icons.album,
                                     color: Colors.deepPurple,
                                   ),
-                                  title: Text(review['albumTitle'] ?? 'Álbum'),
+                                  title: Text(review['albumTitle'] ?? l10n.album),
                                   subtitle: Text(
-                                    'Nota: ${review['rating']}/5\n"${review['reviewText'] ?? ''}"',
+                                    '${l10n.ratingLabel}: ${review['rating']}/5\n"${review['reviewText'] ?? ''}"',
                                   ),
                                 ),
 
                                 const Divider(),
 
-                                const Text(
-                                  "Comentarios",
-                                  style: TextStyle(
+                                Text(
+                                  l10n.comments,
+                                  style: const TextStyle(
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
@@ -261,11 +283,11 @@ class _PublicProfileScreenState extends State<PublicProfileScreen> {
                                     final comments = commentSnapshot.data!.docs;
 
                                     if (comments.isEmpty) {
-                                      return const Padding(
-                                        padding: EdgeInsets.only(bottom: 8),
+                                      Padding(
+                                        padding: const EdgeInsets.only(bottom: 8),
                                         child: Text(
-                                          "Aún no hay comentarios.",
-                                          style: TextStyle(color: Colors.grey),
+                                          l10n.noCommentsYet,
+                                          style: const TextStyle(color: Colors.grey),
                                         ),
                                       );
                                     }
@@ -299,9 +321,9 @@ class _PublicProfileScreenState extends State<PublicProfileScreen> {
                                       Expanded(
                                         child: TextField(
                                           controller: _commentControllers[reviewId],
-                                          decoration: const InputDecoration(
-                                            hintText: "Escribe un comentario...",
-                                            border: OutlineInputBorder(),
+                                          decoration: InputDecoration(
+                                            hintText: l10n.writeComment,
+                                            border: const OutlineInputBorder(),
                                           ),
                                         ),
                                       ),
@@ -321,7 +343,7 @@ class _PublicProfileScreenState extends State<PublicProfileScreen> {
                                           reviewOwnerUid: widget.uid,
                                           reviewId: reviewId,
                                           senderUid: currentUser.uid,
-                                          senderName: currentUser.displayName ?? "Usuario",
+                                          senderName: currentUser.displayName ?? l10n.user,
                                           text: controller.text.trim(),
                                         );
 

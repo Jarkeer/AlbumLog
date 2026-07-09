@@ -16,7 +16,15 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   final TextEditingController _nameController = TextEditingController();
-  final List<String> _genres = ['Rock', 'Pop', 'Metal', 'Jazz', 'Electrónica', 'Hip-Hop', 'Todos'];
+  List<String> _genres(AppLocalizations l10n) => [
+        l10n.rock,
+        l10n.pop,
+        l10n.metal,
+        l10n.jazz,
+        l10n.electronic,
+        l10n.hipHop,
+        l10n.allGenres,
+      ];
   final CommentService _commentService = CommentService();
 
   @override
@@ -93,14 +101,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     children: [
                                       IconButton(
                                         icon: const Icon(Icons.public, color: Colors.deepPurpleAccent),
-                                        tooltip: "Ver perfil público",
+                                        tooltip: l10n.viewPublicProfile,
                                         onPressed: () {
                                           Navigator.push(
                                             context,
                                             MaterialPageRoute(
                                               builder: (_) => PublicProfileScreen(
                                                 uid: authVM.user!.uid,
-                                                displayName: authVM.user!.displayName ?? "Usuario",
+                                                displayName: authVM.user!.displayName ?? l10n.user,
                                                 photoURL: authVM.user!.photoURL ?? "",
                                               ),
                                             ),
@@ -195,13 +203,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                       // Selector de Género
                       DropdownButtonFormField<String>(
-                        initialValue: _genres.contains(preferencesVM.favoriteGenre) ? preferencesVM.favoriteGenre : 'Todos',
+                        initialValue: _genres(l10n).contains(preferencesVM.favoriteGenre)
+                          ? preferencesVM.favoriteGenre
+                          : l10n.allGenres,
                         decoration: InputDecoration(
                           labelText: l10n.favoriteGenre,
                           border: OutlineInputBorder(),
                           prefixIcon: Icon(Icons.music_note),
                         ),
-                        items: _genres.map((String genre) {
+                        items: _genres(l10n).map((String genre) {
                           return DropdownMenuItem<String>(
                             value: genre,
                             child: Text(genre),
@@ -310,10 +320,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       const SizedBox(height: 12),
                                       const Divider(),
 
-                                      const Text(
-                                        "Comentarios",
-                                        style: TextStyle(fontWeight: FontWeight.bold),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(vertical: 8),
+                                      child: Text(
+                                        l10n.noCommentsYet,
+                                        style: const TextStyle(color: Colors.grey),
                                       ),
+                                    ),
 
                                       StreamBuilder<QuerySnapshot>(
                                         stream: _commentService.getComments(

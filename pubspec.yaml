@@ -49,8 +49,8 @@ dependencies:
   google_sign_in: ^7.2.0
   flutter_dotenv: ^6.0.1
   intl: ^0.20.2
-  # Dejamos solo la de mensajería aquí, sin duplicar las anteriores
   firebase_messaging: ^16.4.1
+  
 dev_dependencies:
   flutter_test:
     sdk: flutter

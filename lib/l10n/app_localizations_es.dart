@@ -211,4 +211,110 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get spanishChile => 'Español (Chile)';
+
+  @override
+  String get userDefaultName => 'Usuario de AlbumLog';
+
+  @override
+  String get comments => 'Comentarios';
+
+  @override
+  String get loginToComment => 'Debes iniciar sesión para comentar.';
+
+  @override
+  String get user => 'Usuario';
+
+  @override
+  String get noComment => 'Sin comentario';
+
+  @override
+  String get beFirstComment => 'Sé el primero en comentar.';
+
+  @override
+  String get writeComment => 'Escribe un comentario...';
+
+  @override
+  String get error => 'Error';
+
+  @override
+  String get viewPublicProfile => 'Ver perfil público';
+
+  @override
+  String get allGenres => 'Todos';
+
+  @override
+  String get rock => 'Rock';
+
+  @override
+  String get pop => 'Pop';
+
+  @override
+  String get metal => 'Metal';
+
+  @override
+  String get jazz => 'Jazz';
+
+  @override
+  String get electronic => 'Electrónica';
+
+  @override
+  String get hipHop => 'Hip-Hop';
+
+  @override
+  String get noCommentsYet => 'Aún no hay comentarios.';
+
+  @override
+  String profileOf(Object name) {
+    return 'Perfil de $name';
+  }
+
+  @override
+  String get errorLoadingProfile => 'Error al cargar la información del perfil';
+
+  @override
+  String favoriteGenreLabel(Object genre) {
+    return 'Género Favorito: $genre';
+  }
+
+  @override
+  String get notSpecified => 'No especificado';
+
+  @override
+  String get sendFriendRequest => 'Enviar solicitud';
+
+  @override
+  String get friendsRemove => 'Amigos (Eliminar)';
+
+  @override
+  String get pendingRequestCancel => 'Solicitud pendiente (Cancelar)';
+
+  @override
+  String get accept => 'Aceptar';
+
+  @override
+  String get reject => 'Rechazar';
+
+  @override
+  String get musicActivity => 'Su actividad musical';
+
+  @override
+  String get userNoReviews => 'Este usuario aún no ha compartido reseñas.';
+
+  @override
+  String get album => 'Álbum';
+
+  @override
+  String get ratingLabel => 'Nota';
+
+  @override
+  String get userSearchHint => 'Buscar melómanos...';
+
+  @override
+  String get searchUserMessage => 'Escribe el nombre de un usuario para buscar';
+
+  @override
+  String get noUsersFound => 'No se encontraron usuarios';
+
+  @override
+  String get noFavoriteGenre => 'Sin género favorito';
 }

@@ -42,19 +42,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get shareAlbum => 'Share album';
 
   @override
-  String get selectAtLeastOneStar => 'Please select at least one star';
+  String get selectAtLeastOneStar => 'Please select at least 1 star';
 
   @override
   String get reviewSavedCloud => 'Review saved locally and backed up to the cloud!';
 
   @override
-  String get reviewSavedLocal => 'Review saved locally! (Sign in to back it up)';
+  String get reviewSavedLocal => 'Review saved to your local collection! (Sign in to back it up)';
 
   @override
-  String get errorSaving => 'Error saving:';
+  String get errorSaving => 'Error while saving:';
 
   @override
-  String get whatDidYouThink => 'What did you think of this album?';
+  String get whatDidYouThink => 'What did you think about this album?';
 
   @override
   String get writeReview => 'Write your review (optional)';
@@ -66,13 +66,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get similarAlbums => 'Similar albums';
 
   @override
-  String get shareMessage => 'Check out this awesome album I found on AlbumLog!';
+  String get shareMessage => 'Check out this amazing album I found on AlbumLog!';
 
   @override
   String get byArtist => 'by';
 
   @override
-  String get downloadApp => 'Download the app and start your collection!';
+  String get downloadApp => 'Download the app and build your collection!';
 
   @override
   String get exploreAlbums => 'Explore Albums';
@@ -105,19 +105,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get unknownArtist => 'Unknown artist';
 
   @override
-  String get lastFmDescription => 'Album retrieved from Last.fm database';
+  String get lastFmDescription => 'Album obtained from the Last.fm database';
 
   @override
   String get homeWelcome => 'Welcome to your music journal';
 
   @override
-  String get homeDescription => 'AlbumLog is the place where your favorite albums come to life. Here you don\'t just listen to music, you experience it, review it, and share it.';
+  String get homeDescription => 'AlbumLog is the place where your favorite albums come to life. Here you don\'t just listen to music—you experience it, review it, and share it.';
 
   @override
   String get personalReviews => 'Personal Reviews';
 
   @override
-  String get personalReviewsDescription => 'Rate every album from 1 to 5 stars and leave your opinion.';
+  String get personalReviewsDescription => 'Rate each album from 1 to 5 stars and leave your opinion.';
 
   @override
   String get community => 'Community';
@@ -135,7 +135,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get logout => 'Sign out';
 
   @override
-  String get logoutSuccess => 'Successfully signed out';
+  String get logoutSuccess => 'Signed out successfully';
 
   @override
   String get syncCloud => 'Sync your account to the cloud';
@@ -168,13 +168,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get albums => 'albums';
 
   @override
-  String get noSavedAlbums => 'You don\'t have any locally saved albums.\nRate albums from the search screen!';
+  String get noSavedAlbums => 'You don\'t have any albums saved locally.\nRate albums from the search screen!';
 
   @override
   String get localRecordDeleted => 'Record deleted from local storage';
 
   @override
-  String get qaTitle => 'QA Beta Testing';
+  String get qaTitle => 'Beta Testing QA';
 
   @override
   String get qaDescription => 'Please rate the following aspects (0 to 5 stars):';
@@ -195,13 +195,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsTitle => 'Settings';
 
   @override
-  String get visualAspect => 'Visual Appearance';
+  String get visualAspect => 'Appearance';
 
   @override
   String get darkMode => 'Dark Mode';
 
   @override
-  String get changeTheme => 'Change the entire app theme';
+  String get changeTheme => 'Change the theme for the entire application';
 
   @override
   String get account => 'Account';
@@ -211,4 +211,110 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get spanishChile => 'Spanish (Chile)';
+
+  @override
+  String get userDefaultName => 'AlbumLog User';
+
+  @override
+  String get comments => 'Comments';
+
+  @override
+  String get loginToComment => 'You must sign in to comment.';
+
+  @override
+  String get user => 'User';
+
+  @override
+  String get noComment => 'No comment';
+
+  @override
+  String get beFirstComment => 'Be the first to comment.';
+
+  @override
+  String get writeComment => 'Write a comment...';
+
+  @override
+  String get error => 'Error';
+
+  @override
+  String get viewPublicProfile => 'View Public Profile';
+
+  @override
+  String get allGenres => 'All';
+
+  @override
+  String get rock => 'Rock';
+
+  @override
+  String get pop => 'Pop';
+
+  @override
+  String get metal => 'Metal';
+
+  @override
+  String get jazz => 'Jazz';
+
+  @override
+  String get electronic => 'Electronic';
+
+  @override
+  String get hipHop => 'Hip-Hop';
+
+  @override
+  String get noCommentsYet => 'There are no comments yet.';
+
+  @override
+  String profileOf(Object name) {
+    return 'Profile of $name';
+  }
+
+  @override
+  String get errorLoadingProfile => 'Error loading profile information';
+
+  @override
+  String favoriteGenreLabel(Object genre) {
+    return 'Favorite Genre: $genre';
+  }
+
+  @override
+  String get notSpecified => 'Not specified';
+
+  @override
+  String get sendFriendRequest => 'Send Friend Request';
+
+  @override
+  String get friendsRemove => 'Friends (Remove)';
+
+  @override
+  String get pendingRequestCancel => 'Pending Request (Cancel)';
+
+  @override
+  String get accept => 'Accept';
+
+  @override
+  String get reject => 'Reject';
+
+  @override
+  String get musicActivity => 'Music Activity';
+
+  @override
+  String get userNoReviews => 'This user hasn\'t shared any reviews yet.';
+
+  @override
+  String get album => 'Album';
+
+  @override
+  String get ratingLabel => 'Rating';
+
+  @override
+  String get userSearchHint => 'Search music lovers...';
+
+  @override
+  String get searchUserMessage => 'Type a username to search';
+
+  @override
+  String get noUsersFound => 'No users found';
+
+  @override
+  String get noFavoriteGenre => 'No favorite genre';
 }

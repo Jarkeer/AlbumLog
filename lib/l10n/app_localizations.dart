@@ -164,7 +164,7 @@ abstract class AppLocalizations {
   /// No description provided for @selectAtLeastOneStar.
   ///
   /// In en, this message translates to:
-  /// **'Please select at least one star'**
+  /// **'Please select at least 1 star'**
   String get selectAtLeastOneStar;
 
   /// No description provided for @reviewSavedCloud.
@@ -176,19 +176,19 @@ abstract class AppLocalizations {
   /// No description provided for @reviewSavedLocal.
   ///
   /// In en, this message translates to:
-  /// **'Review saved locally! (Sign in to back it up)'**
+  /// **'Review saved to your local collection! (Sign in to back it up)'**
   String get reviewSavedLocal;
 
   /// No description provided for @errorSaving.
   ///
   /// In en, this message translates to:
-  /// **'Error saving:'**
+  /// **'Error while saving:'**
   String get errorSaving;
 
   /// No description provided for @whatDidYouThink.
   ///
   /// In en, this message translates to:
-  /// **'What did you think of this album?'**
+  /// **'What did you think about this album?'**
   String get whatDidYouThink;
 
   /// No description provided for @writeReview.
@@ -212,7 +212,7 @@ abstract class AppLocalizations {
   /// No description provided for @shareMessage.
   ///
   /// In en, this message translates to:
-  /// **'Check out this awesome album I found on AlbumLog!'**
+  /// **'Check out this amazing album I found on AlbumLog!'**
   String get shareMessage;
 
   /// No description provided for @byArtist.
@@ -224,7 +224,7 @@ abstract class AppLocalizations {
   /// No description provided for @downloadApp.
   ///
   /// In en, this message translates to:
-  /// **'Download the app and start your collection!'**
+  /// **'Download the app and build your collection!'**
   String get downloadApp;
 
   /// No description provided for @exploreAlbums.
@@ -290,7 +290,7 @@ abstract class AppLocalizations {
   /// No description provided for @lastFmDescription.
   ///
   /// In en, this message translates to:
-  /// **'Album retrieved from Last.fm database'**
+  /// **'Album obtained from the Last.fm database'**
   String get lastFmDescription;
 
   /// No description provided for @homeWelcome.
@@ -302,7 +302,7 @@ abstract class AppLocalizations {
   /// No description provided for @homeDescription.
   ///
   /// In en, this message translates to:
-  /// **'AlbumLog is the place where your favorite albums come to life. Here you don\'t just listen to music, you experience it, review it, and share it.'**
+  /// **'AlbumLog is the place where your favorite albums come to life. Here you don\'t just listen to music—you experience it, review it, and share it.'**
   String get homeDescription;
 
   /// No description provided for @personalReviews.
@@ -314,7 +314,7 @@ abstract class AppLocalizations {
   /// No description provided for @personalReviewsDescription.
   ///
   /// In en, this message translates to:
-  /// **'Rate every album from 1 to 5 stars and leave your opinion.'**
+  /// **'Rate each album from 1 to 5 stars and leave your opinion.'**
   String get personalReviewsDescription;
 
   /// No description provided for @community.
@@ -350,7 +350,7 @@ abstract class AppLocalizations {
   /// No description provided for @logoutSuccess.
   ///
   /// In en, this message translates to:
-  /// **'Successfully signed out'**
+  /// **'Signed out successfully'**
   String get logoutSuccess;
 
   /// No description provided for @syncCloud.
@@ -416,7 +416,7 @@ abstract class AppLocalizations {
   /// No description provided for @noSavedAlbums.
   ///
   /// In en, this message translates to:
-  /// **'You don\'t have any locally saved albums.\nRate albums from the search screen!'**
+  /// **'You don\'t have any albums saved locally.\nRate albums from the search screen!'**
   String get noSavedAlbums;
 
   /// No description provided for @localRecordDeleted.
@@ -428,7 +428,7 @@ abstract class AppLocalizations {
   /// No description provided for @qaTitle.
   ///
   /// In en, this message translates to:
-  /// **'QA Beta Testing'**
+  /// **'Beta Testing QA'**
   String get qaTitle;
 
   /// No description provided for @qaDescription.
@@ -470,7 +470,7 @@ abstract class AppLocalizations {
   /// No description provided for @visualAspect.
   ///
   /// In en, this message translates to:
-  /// **'Visual Appearance'**
+  /// **'Appearance'**
   String get visualAspect;
 
   /// No description provided for @darkMode.
@@ -482,7 +482,7 @@ abstract class AppLocalizations {
   /// No description provided for @changeTheme.
   ///
   /// In en, this message translates to:
-  /// **'Change the entire app theme'**
+  /// **'Change the theme for the entire application'**
   String get changeTheme;
 
   /// No description provided for @account.
@@ -502,6 +502,210 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Spanish (Chile)'**
   String get spanishChile;
+
+  /// No description provided for @userDefaultName.
+  ///
+  /// In en, this message translates to:
+  /// **'AlbumLog User'**
+  String get userDefaultName;
+
+  /// No description provided for @comments.
+  ///
+  /// In en, this message translates to:
+  /// **'Comments'**
+  String get comments;
+
+  /// No description provided for @loginToComment.
+  ///
+  /// In en, this message translates to:
+  /// **'You must sign in to comment.'**
+  String get loginToComment;
+
+  /// No description provided for @user.
+  ///
+  /// In en, this message translates to:
+  /// **'User'**
+  String get user;
+
+  /// No description provided for @noComment.
+  ///
+  /// In en, this message translates to:
+  /// **'No comment'**
+  String get noComment;
+
+  /// No description provided for @beFirstComment.
+  ///
+  /// In en, this message translates to:
+  /// **'Be the first to comment.'**
+  String get beFirstComment;
+
+  /// No description provided for @writeComment.
+  ///
+  /// In en, this message translates to:
+  /// **'Write a comment...'**
+  String get writeComment;
+
+  /// No description provided for @error.
+  ///
+  /// In en, this message translates to:
+  /// **'Error'**
+  String get error;
+
+  /// No description provided for @viewPublicProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'View Public Profile'**
+  String get viewPublicProfile;
+
+  /// No description provided for @allGenres.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get allGenres;
+
+  /// No description provided for @rock.
+  ///
+  /// In en, this message translates to:
+  /// **'Rock'**
+  String get rock;
+
+  /// No description provided for @pop.
+  ///
+  /// In en, this message translates to:
+  /// **'Pop'**
+  String get pop;
+
+  /// No description provided for @metal.
+  ///
+  /// In en, this message translates to:
+  /// **'Metal'**
+  String get metal;
+
+  /// No description provided for @jazz.
+  ///
+  /// In en, this message translates to:
+  /// **'Jazz'**
+  String get jazz;
+
+  /// No description provided for @electronic.
+  ///
+  /// In en, this message translates to:
+  /// **'Electronic'**
+  String get electronic;
+
+  /// No description provided for @hipHop.
+  ///
+  /// In en, this message translates to:
+  /// **'Hip-Hop'**
+  String get hipHop;
+
+  /// No description provided for @noCommentsYet.
+  ///
+  /// In en, this message translates to:
+  /// **'There are no comments yet.'**
+  String get noCommentsYet;
+
+  /// No description provided for @profileOf.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile of {name}'**
+  String profileOf(Object name);
+
+  /// No description provided for @errorLoadingProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Error loading profile information'**
+  String get errorLoadingProfile;
+
+  /// No description provided for @favoriteGenreLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Favorite Genre: {genre}'**
+  String favoriteGenreLabel(Object genre);
+
+  /// No description provided for @notSpecified.
+  ///
+  /// In en, this message translates to:
+  /// **'Not specified'**
+  String get notSpecified;
+
+  /// No description provided for @sendFriendRequest.
+  ///
+  /// In en, this message translates to:
+  /// **'Send Friend Request'**
+  String get sendFriendRequest;
+
+  /// No description provided for @friendsRemove.
+  ///
+  /// In en, this message translates to:
+  /// **'Friends (Remove)'**
+  String get friendsRemove;
+
+  /// No description provided for @pendingRequestCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending Request (Cancel)'**
+  String get pendingRequestCancel;
+
+  /// No description provided for @accept.
+  ///
+  /// In en, this message translates to:
+  /// **'Accept'**
+  String get accept;
+
+  /// No description provided for @reject.
+  ///
+  /// In en, this message translates to:
+  /// **'Reject'**
+  String get reject;
+
+  /// No description provided for @musicActivity.
+  ///
+  /// In en, this message translates to:
+  /// **'Music Activity'**
+  String get musicActivity;
+
+  /// No description provided for @userNoReviews.
+  ///
+  /// In en, this message translates to:
+  /// **'This user hasn\'t shared any reviews yet.'**
+  String get userNoReviews;
+
+  /// No description provided for @album.
+  ///
+  /// In en, this message translates to:
+  /// **'Album'**
+  String get album;
+
+  /// No description provided for @ratingLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Rating'**
+  String get ratingLabel;
+
+  /// No description provided for @userSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search music lovers...'**
+  String get userSearchHint;
+
+  /// No description provided for @searchUserMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Type a username to search'**
+  String get searchUserMessage;
+
+  /// No description provided for @noUsersFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No users found'**
+  String get noUsersFound;
+
+  /// No description provided for @noFavoriteGenre.
+  ///
+  /// In en, this message translates to:
+  /// **'No favorite genre'**
+  String get noFavoriteGenre;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

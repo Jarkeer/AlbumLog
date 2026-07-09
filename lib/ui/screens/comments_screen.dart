@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 
 import '../../models/review_model.dart';
@@ -27,11 +28,12 @@ class _CommentsScreenState extends State<CommentsScreen> {
 
   Future<void> _sendComment() async {
     final authVM = Provider.of<AuthViewModel>(context, listen: false);
+    final l10n = AppLocalizations.of(context)!;
 
     if (authVM.user == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Debes iniciar sesión para comentar."),
+        SnackBar(
+          content: Text(l10n.loginToComment),
         ),
       );
       return;
@@ -50,7 +52,7 @@ class _CommentsScreenState extends State<CommentsScreen> {
         ownerUid: widget.ownerId,
         reviewId: widget.review.reviewId,
         commenterUid: authVM.user!.uid,
-        commenterName: authVM.user!.displayName ?? "Usuario",
+        commenterName: authVM.user!.displayName ?? l10n.user,
         text: text,
       );
 
@@ -58,7 +60,7 @@ class _CommentsScreenState extends State<CommentsScreen> {
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text("Error: $e"),
+          content: Text("${l10n.error}: $e"),
         ),
       );
     }
@@ -87,9 +89,11 @@ class _CommentsScreenState extends State<CommentsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Comentarios"),
+        title: Text(l10n.comments),
       ),
       body: Column(
         children: [
@@ -114,14 +118,13 @@ class _CommentsScreenState extends State<CommentsScreen> {
                     Text(
                       widget.review.reviewText?.isNotEmpty == true
                           ? widget.review.reviewText!
-                          : "Sin comentario",
+                          : l10n.noComment,
                     ),
                   ],
                 ),
               ),
             ),
           ),
-
           Expanded(
             child: StreamBuilder(
               stream: _firebaseService.getComments(
@@ -143,9 +146,9 @@ class _CommentsScreenState extends State<CommentsScreen> {
                 final docs = snapshot.data!.docs;
 
                 if (docs.isEmpty) {
-                  return const Center(
+                  return Center(
                     child: Text(
-                      "Sé el primero en comentar.",
+                      l10n.beFirstComment,
                     ),
                   );
                 }
@@ -165,7 +168,7 @@ class _CommentsScreenState extends State<CommentsScreen> {
                           child: Icon(Icons.person),
                         ),
                         title: Text(
-                          comment["commenterName"] ?? "Usuario",
+                          comment["commenterName"] ?? l10n.user,
                           style: const TextStyle(
                             fontWeight: FontWeight.bold,
                           ),
@@ -180,7 +183,6 @@ class _CommentsScreenState extends State<CommentsScreen> {
               },
             ),
           ),
-
           SafeArea(
             child: Padding(
               padding: const EdgeInsets.all(10),
@@ -189,9 +191,9 @@ class _CommentsScreenState extends State<CommentsScreen> {
                   Expanded(
                     child: TextField(
                       controller: _controller,
-                      decoration: const InputDecoration(
-                        hintText: "Escribe un comentario...",
-                        border: OutlineInputBorder(),
+                      decoration: InputDecoration(
+                        hintText: l10n.writeComment,
+                        border: const OutlineInputBorder(),
                       ),
                     ),
                   ),

@@ -8,7 +8,6 @@ import 'package:share_plus/share_plus.dart';
 import 'ui/screens/explore_screen.dart';
 import 'viewsmodel/preferences_viewmodel.dart';
 import 'viewsmodel/qa_viewmodel.dart';
-// IMPORT CAMBIADO: Ahora importamos la pantalla de búsqueda en lugar de QA
 import 'ui/screens/user_search_screen.dart'; 
 import 'viewsmodel/auth_viewmodel.dart';
 import 'ui/screens/profile_screen.dart';

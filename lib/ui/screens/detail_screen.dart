@@ -1,4 +1,4 @@
-import 'package:album_log/viewsmodel/preferences_viewmodel.dart';
+import '../../viewsmodel/preferences_viewmodel.dart'; 
 import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart'; 
 import 'package:provider/provider.dart';

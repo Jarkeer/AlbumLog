@@ -3,6 +3,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+// AGREGADO: Importa el servicio de notificaciones
+import '../services/notification_service.dart'; 
+
 class AuthViewModel extends ChangeNotifier {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn.instance;
@@ -15,11 +18,20 @@ class AuthViewModel extends ChangeNotifier {
   bool get isLoading => _isLoading;
   
   AuthViewModel() {
-    
     _user = _auth.currentUser;
+    
+    if (_user != null) {
+      NotificationService().initializeNotificationSystem(_user!.uid);
+    }
     
     _auth.authStateChanges().listen((User? newUser) {
       _user = newUser;
+      
+      // AGREGADO: Si el listener detecta un nuevo inicio de sesión, registramos el token
+      if (newUser != null) {
+        NotificationService().initializeNotificationSystem(newUser.uid);
+      }
+      
       notifyListeners();
     });
   }
@@ -49,11 +61,9 @@ class AuthViewModel extends ChangeNotifier {
       final AuthCredential credential = GoogleAuthProvider.credential(
         idToken: googleAuth.idToken,
       );
-
       
       await _auth.signInWithCredential(credential);
 
-      // Crear o actualizar el perfil público en Cloud Firestore
       if (_auth.currentUser != null) {
         await FirebaseFirestore.instance
             .collection('users')
@@ -65,6 +75,8 @@ class AuthViewModel extends ChangeNotifier {
           'email': _auth.currentUser!.email ?? '', 
           'lastSeen': FieldValue.serverTimestamp(), 
         }, SetOptions(merge: true)); 
+        
+        await NotificationService().initializeNotificationSystem(_auth.currentUser!.uid);
       }
 
     } catch (e) {

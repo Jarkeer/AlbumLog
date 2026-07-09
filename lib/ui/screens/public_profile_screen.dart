@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:provider/provider.dart';
 import '../../viewsmodel/auth_viewmodel.dart';
 import '../../services/friendship_service.dart';
+import '../../services/comment_service.dart';
 
 class PublicProfileScreen extends StatefulWidget {
   final String uid;
@@ -23,7 +24,16 @@ class PublicProfileScreen extends StatefulWidget {
 class _PublicProfileScreenState extends State<PublicProfileScreen> {
   // Instanciamos el servicio de amistad
   final FriendshipService _friendshipService = FriendshipService();
+  final CommentService _commentService = CommentService();
+  final Map<String, TextEditingController> _commentControllers = {};
 
+  @override
+  void dispose() {
+    for (final controller in _commentControllers.values) {
+      controller.dispose();
+    }
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
     // Obtenemos al usuario autenticado actual para la lógica de amistad
@@ -198,13 +208,130 @@ class _PublicProfileScreenState extends State<PublicProfileScreen> {
                       physics: const NeverScrollableScrollPhysics(),
                       itemCount: reviews.length,
                       itemBuilder: (context, revIndex) {
-                        final review = reviews[revIndex].data() as Map<String, dynamic>;
+                      final reviewDoc = reviews[revIndex];
+                      final reviewId = reviewDoc.id;
+
+                      if (!_commentControllers.containsKey(reviewId)) {
+                        _commentControllers[reviewId] = TextEditingController();
+                      }
+
+                      final review = reviewDoc.data() as Map<String, dynamic>;
                         return Card(
-                          margin: const EdgeInsets.symmetric(vertical: 6),
-                          child: ListTile(
-                            leading: const Icon(Icons.album, color: Colors.deepPurple),
-                            title: Text(review['albumTitle'] ?? 'Álbum Desconocido'),
-                            subtitle: Text('Nota: ${review['rating']}/5\n"${review['reviewText'] ?? ''}"'),
+                          margin: const EdgeInsets.symmetric(vertical: 8),
+                          child: Padding(
+                            padding: const EdgeInsets.all(12),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+
+                                ListTile(
+                                  contentPadding: EdgeInsets.zero,
+                                  leading: const Icon(
+                                    Icons.album,
+                                    color: Colors.deepPurple,
+                                  ),
+                                  title: Text(review['albumTitle'] ?? 'Álbum'),
+                                  subtitle: Text(
+                                    'Nota: ${review['rating']}/5\n"${review['reviewText'] ?? ''}"',
+                                  ),
+                                ),
+
+                                const Divider(),
+
+                                const Text(
+                                  "Comentarios",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+
+                                const SizedBox(height: 8),
+
+                                StreamBuilder<QuerySnapshot>(
+                                  stream: _commentService.getComments(
+                                    widget.uid,
+                                    reviewId,
+                                  ),
+                                  builder: (context, commentSnapshot) {
+
+                                    if (!commentSnapshot.hasData) {
+                                      return const SizedBox();
+                                    }
+
+                                    final comments = commentSnapshot.data!.docs;
+
+                                    if (comments.isEmpty) {
+                                      return const Padding(
+                                        padding: EdgeInsets.only(bottom: 8),
+                                        child: Text(
+                                          "Aún no hay comentarios.",
+                                          style: TextStyle(color: Colors.grey),
+                                        ),
+                                      );
+                                    }
+
+                                    return ListView.builder(
+                                      shrinkWrap: true,
+                                      physics: const NeverScrollableScrollPhysics(),
+                                      itemCount: comments.length,
+                                      itemBuilder: (context, i) {
+
+                                        final data =
+                                            comments[i].data() as Map<String, dynamic>;
+
+                                        return ListTile(
+                                          dense: true,
+                                          leading: const Icon(Icons.person),
+                                          title: Text(data['senderName'] ?? ''),
+                                          subtitle: Text(data['text'] ?? ''),
+                                        );
+                                      },
+                                    );
+                                  },
+                                ),
+
+                                const SizedBox(height: 10),
+
+                                if (currentUser != null)
+                                  Row(
+                                    children: [
+
+                                      Expanded(
+                                        child: TextField(
+                                          controller: _commentControllers[reviewId],
+                                          decoration: const InputDecoration(
+                                            hintText: "Escribe un comentario...",
+                                            border: OutlineInputBorder(),
+                                          ),
+                                        ),
+                                      ),
+
+                                      IconButton(
+                                        icon: const Icon(Icons.send),
+                                        color: Colors.deepPurple,
+                                        onPressed: () async {
+
+                                        final controller = _commentControllers[reviewId]!;
+
+                                        if (controller.text.trim().isEmpty) {
+                                          return;
+                                        }
+
+                                        await _commentService.addComment(
+                                          reviewOwnerUid: widget.uid,
+                                          reviewId: reviewId,
+                                          senderUid: currentUser.uid,
+                                          senderName: currentUser.displayName ?? "Usuario",
+                                          text: controller.text.trim(),
+                                        );
+
+                                        controller.clear();
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                              ],
+                            ),
                           ),
                         );
                       },
